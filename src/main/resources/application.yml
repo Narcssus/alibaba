@@ -1,0 +1,27 @@
+server:
+  port: 8801
+  servlet:
+    context-path: /alibaba
+
+spring:
+  datasource:
+    username: root
+    password: Narc0912
+    url: jdbc:mysql://cdb-353dbplv.gz.tencentcdb.com:10150/myWedding?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    driver-class-name: com.mysql.jdbc.Driver
+
+# 日志配置
+logging:
+  level:
+    org.springframework: info
+    com.narc: info
+    additivity: false
+  file: ./logs/alibaba.log
+  file.max-size: 100MB
+
+
+alimamaServer:
+  url: http://gw.api.taobao.com/router/rest
+  appKey: 31519618
+  appSecret: 2defc55c65b0835a4472929147e7e3f8
+  adzoneId: 110924600173
