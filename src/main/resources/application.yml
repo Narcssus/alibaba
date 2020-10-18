@@ -20,8 +20,3 @@ logging:
   file.max-size: 100MB
 
 
-alimamaServer:
-  url: http://gw.api.taobao.com/router/rest
-  appKey: 31519618
-  appSecret: 2defc55c65b0835a4472929147e7e3f8
-  adzoneId: 110924600173
