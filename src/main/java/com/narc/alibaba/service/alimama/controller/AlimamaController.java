@@ -1,5 +1,6 @@
 package com.narc.alibaba.service.alimama.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.narc.alibaba.service.alimama.service.AlimamaService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -25,18 +26,12 @@ public class AlimamaController {
     @Autowired
     private AlimamaService alimamaService;
 
-    @ApiOperation(value = "创建用户", notes = "根据User对象创建用户")
-    @ApiImplicitParam(name = "param", value = "param", required = true, dataType = "String")
-    @PostMapping(value = "/user")
-    public String getUser(String param) {
-        log.info(param);
-        return "123";
-    }
-
     @ApiOperation(value = "淘口令转链", notes = "淘口令转链")
     @GetMapping(value = "/tranShareWord")
-    public String tranShareWord(String shareWord) {
-        return alimamaService.tranShareWord(shareWord);
+    public JSONObject tranShareWord(String shareWord) {
+        JSONObject res = new JSONObject();
+        res.put("tranShareWord", alimamaService.tranShareWord(shareWord));
+        return res;
     }
 
 
