@@ -1,5 +1,7 @@
 package com.narc.alibaba.service.alimama.service;
 
+import com.alibaba.fastjson.JSONObject;
+
 /**
  * @author Narcssus
  * @version 1.0
@@ -9,9 +11,8 @@ public interface AlimamaService {
 
     /**
      *  淘口令转链
-     * @param originalWord
      * @return
      */
-     String tranShareWord(String originalWord);
+    JSONObject tranShareWord(JSONObject paramObject);
 
 }

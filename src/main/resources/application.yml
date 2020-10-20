@@ -3,13 +3,6 @@ server:
   servlet:
     context-path: /alibaba
 
-spring:
-  datasource:
-    username: root
-    password: Narc0912
-    url: jdbc:mysql://cdb-353dbplv.gz.tencentcdb.com:10150/myWedding?useUnicode=true&characterEncoding=utf-8&useSSL=false
-    driver-class-name: com.mysql.jdbc.Driver
-
 # 日志配置
 logging:
   level:
@@ -18,5 +11,3 @@ logging:
     additivity: false
   file: ./logs/alibaba.log
   file.max-size: 100MB
-
-

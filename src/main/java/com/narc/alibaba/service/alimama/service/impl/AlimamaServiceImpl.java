@@ -1,5 +1,6 @@
 package com.narc.alibaba.service.alimama.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.narc.alibaba.service.alimama.service.AlimamaService;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -35,12 +37,20 @@ public class AlimamaServiceImpl implements AlimamaService {
 
 
     @Override
-    public String tranShareWord(String originalWord) {
+    public JSONObject tranShareWord(JSONObject paramObject) {
+        String originalWord = paramObject.getString("originalWord");
+        String res = tranShareWord(originalWord);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("tranShareWord", res);
+        return jsonObject;
+    }
+
+    private String tranShareWord(String originalWord) {
         if (!originalWord.contains("【") || !originalWord.contains("】")) {
             return "不支持此淘口令";
         }
         try {
-            String name = originalWord.substring(originalWord.indexOf('【') + 1, originalWord.indexOf('】'));
+            String name = originalWord.substring(originalWord.indexOf('【') + 1, originalWord.lastIndexOf('】'));
             TaobaoClient client = new DefaultTaobaoClient(apiUrl, appKey, appSecret);
             TbkDgMaterialOptionalRequest req = new TbkDgMaterialOptionalRequest();
             req.setAdzoneId(adzoneId);
@@ -62,9 +72,26 @@ public class AlimamaServiceImpl implements AlimamaService {
             req2.setUrl(itemUrl);
             TbkTpwdCreateResponse response2 = client.execute(req2);
             TbkTpwdCreateResponse.MapData res2 = response2.getData();
-            return res2.getModel();
+            String model = res2.getModel();
+            String rate = res1.getCommissionRate();
+            StringBuilder sb = new StringBuilder();
+            sb.append(model).append("\r\n");
+            if (!StringUtils.isEmpty(rate)) {
+                BigDecimal a = new BigDecimal(rate);
+                a = a.multiply(new BigDecimal(0.9));
+                BigDecimal b = a.divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN);
+                sb.append("==================").append("\r\n");
+                sb.append("返现率为").append(b.toPlainString()).append("%").append("\r\n");
+                BigDecimal c = new BigDecimal(res1.getReservePrice());
+                c = c.multiply(b).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN);
+                sb.append("==================").append("\r\n");
+                sb.append("预计返现为").append(c.toPlainString()).append("元");
+            }
+            return sb.toString();
         } catch (Exception e) {
             return "系统失败";
         }
     }
+
+
 }
