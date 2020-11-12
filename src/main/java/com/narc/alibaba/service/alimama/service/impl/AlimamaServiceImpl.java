@@ -1,7 +1,10 @@
 package com.narc.alibaba.service.alimama.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.narc.alibaba.service.alimama.service.AlimamaService;
+import com.narc.alibaba.utils.HttpUtils;
+import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
 import com.taobao.api.request.TbkDgMaterialOptionalRequest;
@@ -45,35 +48,85 @@ public class AlimamaServiceImpl implements AlimamaService {
         return jsonObject;
     }
 
-    private String tranShareWord(String originalWord) {
-        if (!originalWord.contains("【") || !originalWord.contains("】")) {
-            return "不支持此淘口令";
+    private static final String URL_CHAR = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ:/.?=&";
+
+    private static String getUrlByWord(String word) {
+        String url = "";
+        for (int i = word.indexOf("http"); i < word.length(); i++) {
+            char c = word.charAt(i);
+            if (!URL_CHAR.contains("" + c)) {
+                break;
+            }
+            url += c;
         }
+        return url;
+    }
+
+    private static String getNameByWord(String word) {
+        String res = "";
+        for (int i = word.lastIndexOf("】"); i >= 0; i--) {
+            char c = word.charAt(i);
+            if (c == '】') {
+                continue;
+            }
+            if (c == '【') {
+                break;
+            }
+            res = ("" + c) + res;
+
+        }
+        return res;
+    }
+
+    private static String getName(String content) {
+        String res = "";
+        int i = content.indexOf("extraData");
+        content = content.substring(i);
+        for (i = content.indexOf("{"); i < content.length(); i++) {
+            char c = content.charAt(i);
+            res += c;
+            if (c == '}') {
+                break;
+            }
+        }
+        JSONObject jsonObject = JSON.parseObject(res);
+        return jsonObject.getString("title");
+    }
+
+    private static String getItemId(String content) {
+        String res = "";
+        for (int i = content.indexOf("https://a.m.tmall.com/") + 23; i < content.length(); i++) {
+            char c = content.charAt(i);
+            if (c == '.') {
+                break;
+            }
+            res += c;
+        }
+        return res;
+    }
+
+    private String tranShareWord(String originalWord) {
         try {
-            String name = originalWord.substring(originalWord.indexOf('【') + 1, originalWord.lastIndexOf('】'));
             TaobaoClient client = new DefaultTaobaoClient(apiUrl, appKey, appSecret);
-            TbkDgMaterialOptionalRequest req = new TbkDgMaterialOptionalRequest();
-            req.setAdzoneId(adzoneId);
-            req.setQ(name);
-            TbkDgMaterialOptionalResponse response = client.execute(req);
-            List<TbkDgMaterialOptionalResponse.MapData> res = response.getResultList();
-            if (CollectionUtils.isEmpty(res)) {
+
+
+            TbkDgMaterialOptionalResponse.MapData mapData = getItem(originalWord);
+            if (mapData == null) {
                 return "没有找到该商品";
             }
-            TbkDgMaterialOptionalResponse.MapData res1 = res.get(0);
-            String itemUrl = res1.getCouponShareUrl();
+            String itemUrl = mapData.getCouponShareUrl();
             if (StringUtils.isEmpty(itemUrl)) {
-                itemUrl = res1.getUrl();
+                itemUrl = mapData.getUrl();
             }
             itemUrl = "https:" + itemUrl;
             log.info("itemUrl=" + itemUrl);
             TbkTpwdCreateRequest req2 = new TbkTpwdCreateRequest();
-            req2.setText(req.getQ());
+            req2.setText(mapData.getTitle());
             req2.setUrl(itemUrl);
             TbkTpwdCreateResponse response2 = client.execute(req2);
             TbkTpwdCreateResponse.MapData res2 = response2.getData();
             String model = res2.getModel();
-            String rate = res1.getCommissionRate();
+            String rate = mapData.getCommissionRate();
             StringBuilder sb = new StringBuilder();
             sb.append(model).append("\r\n");
             if (!StringUtils.isEmpty(rate)) {
@@ -82,7 +135,7 @@ public class AlimamaServiceImpl implements AlimamaService {
                 BigDecimal b = a.divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN);
                 sb.append("==================").append("\r\n");
                 sb.append("返现率为").append(b.toPlainString()).append("%").append("\r\n");
-                BigDecimal c = new BigDecimal(res1.getReservePrice());
+                BigDecimal c = new BigDecimal(mapData.getReservePrice());
                 c = c.multiply(b).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN);
                 sb.append("==================").append("\r\n");
                 sb.append("预计返现为").append(c.toPlainString()).append("元");
@@ -91,6 +144,40 @@ public class AlimamaServiceImpl implements AlimamaService {
         } catch (Exception e) {
             return "系统失败";
         }
+    }
+
+    private TbkDgMaterialOptionalResponse.MapData getItem(String originalWord) throws Exception {
+        TaobaoClient client = new DefaultTaobaoClient(apiUrl, appKey, appSecret);
+        if (originalWord.contains("http")) {
+            //用链接的方式找
+            String httpContent = HttpUtils.sendGet(getUrlByWord(originalWord));
+            String itemName = getName(httpContent);
+            String itemId = getItemId(httpContent);
+            TbkDgMaterialOptionalRequest req = new TbkDgMaterialOptionalRequest();
+            req.setAdzoneId(adzoneId);
+            req.setQ(itemName);
+            TbkDgMaterialOptionalResponse response = client.execute(req);
+            List<TbkDgMaterialOptionalResponse.MapData> res = response.getResultList();
+            for (TbkDgMaterialOptionalResponse.MapData mapData : res) {
+                if (itemId.equals("" + mapData.getItemId())) {
+                    return mapData;
+                }
+            }
+        }
+        if (originalWord.contains("】")) {
+            //用括号来找。这种方法找到的不一定是准确的。
+            String name = getNameByWord(originalWord);
+            TbkDgMaterialOptionalRequest req = new TbkDgMaterialOptionalRequest();
+            req.setAdzoneId(adzoneId);
+            req.setQ(name);
+            TbkDgMaterialOptionalResponse response = client.execute(req);
+            List<TbkDgMaterialOptionalResponse.MapData> res = response.getResultList();
+            if (CollectionUtils.isEmpty(res)) {
+                return null;
+            }
+            return res.get(0);
+        }
+        return null;
     }
 
 

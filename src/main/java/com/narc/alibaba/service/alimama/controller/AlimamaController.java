@@ -3,6 +3,7 @@ package com.narc.alibaba.service.alimama.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.narc.alibaba.service.alimama.service.AlimamaService;
+import com.narc.alibaba.utils.HttpUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -30,10 +31,18 @@ public class AlimamaController {
     @ApiOperation(value = "淘口令转链", notes = "淘口令转链")
     @GetMapping(value = "/tranShareWord")
     public JSONObject tranShareWord(String param) {
-        JSONObject res = new JSONObject();
         JSONObject paramObject = JSON.parseObject(param);
         return alimamaService.tranShareWord(paramObject);
     }
+
+    @ApiOperation(value = "淘口令转链", notes = "淘口令转链")
+    @GetMapping(value = "/test")
+    public String test(String param) {
+        String paramObject = HttpUtils.sendGet(param);
+        return paramObject;
+    }
+
+
 
 
 }
