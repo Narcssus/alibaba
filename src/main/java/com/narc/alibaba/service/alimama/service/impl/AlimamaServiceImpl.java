@@ -146,36 +146,28 @@ public class AlimamaServiceImpl implements AlimamaService {
         }
     }
 
-    private TbkDgMaterialOptionalResponse.MapData getItem(String originalWord) throws Exception {
-        TaobaoClient client = new DefaultTaobaoClient(apiUrl, appKey, appSecret);
-        if (originalWord.contains("http")) {
-            //用链接的方式找
-            String httpContent = HttpUtils.sendGet(getUrlByWord(originalWord));
-            String itemName = getName(httpContent);
-            String itemId = getItemId(httpContent);
-            TbkDgMaterialOptionalRequest req = new TbkDgMaterialOptionalRequest();
-            req.setAdzoneId(adzoneId);
-            req.setQ(itemName);
-            TbkDgMaterialOptionalResponse response = client.execute(req);
-            List<TbkDgMaterialOptionalResponse.MapData> res = response.getResultList();
-            for (TbkDgMaterialOptionalResponse.MapData mapData : res) {
-                if (itemId.equals("" + mapData.getItemId())) {
-                    return mapData;
+    private TbkDgMaterialOptionalResponse.MapData getItem(String originalWord) {
+        try {
+            TaobaoClient client = new DefaultTaobaoClient(apiUrl, appKey, appSecret);
+            if (originalWord.contains("https")) {
+                //用链接的方式找
+                String httpContent = HttpUtils.sendGet(getUrlByWord(originalWord));
+                String itemName = getName(httpContent);
+                String itemId = getItemId(httpContent);
+                TbkDgMaterialOptionalRequest req = new TbkDgMaterialOptionalRequest();
+                req.setAdzoneId(adzoneId);
+                req.setQ(itemName);
+                TbkDgMaterialOptionalResponse response = client.execute(req);
+                List<TbkDgMaterialOptionalResponse.MapData> res = response.getResultList();
+                for (TbkDgMaterialOptionalResponse.MapData mapData : res) {
+                    if (itemId.equals("" + mapData.getItemId())) {
+                        return mapData;
+                    }
                 }
             }
-        }
-        if (originalWord.contains("】")) {
-            //用括号来找。这种方法找到的不一定是准确的。
-            String name = getNameByWord(originalWord);
-            TbkDgMaterialOptionalRequest req = new TbkDgMaterialOptionalRequest();
-            req.setAdzoneId(adzoneId);
-            req.setQ(name);
-            TbkDgMaterialOptionalResponse response = client.execute(req);
-            List<TbkDgMaterialOptionalResponse.MapData> res = response.getResultList();
-            if (CollectionUtils.isEmpty(res)) {
-                return null;
-            }
-            return res.get(0);
+        } catch (Exception e) {
+            log.error("查找商品失败", e);
+            return null;
         }
         return null;
     }
