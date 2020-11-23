@@ -43,14 +43,14 @@ public class AlimamaController {
         return paramObject;
     }
 
-    @Value("${from}")
-    private String value;
-
-    @ApiOperation(value = "test", notes = "test")
-    @GetMapping(value = "/test2")
-    public String test2(String param) {
-        return value;
-    }
+//    @Value("${from}")
+//    private String value;
+//
+//    @ApiOperation(value = "test", notes = "test")
+//    @GetMapping(value = "/test2")
+//    public String test2(String param) {
+//        return value;
+//    }
 
 
 

@@ -1,6 +1,7 @@
 server:
   port: 8801
-
+  servlet:
+    context-path: /alibaba
 spring:
   application:
     name: alibaba
@@ -11,12 +12,14 @@ spring:
         service-id: config # 配置中心的名字，直接配置名称可以在配置中心集群的时候实现负载均衡
       profile: base # 对应配置中心文件的${profile}部分
 
+local-ip: 106.52.120.197
+
 eureka:
   client:
-    serviceUrl:
-      defaultZone: http://test:narc1234@106.53.247.226:8761/eureka/
+    service-url:
+      defaultZone: http://test:narc1234@eurekaServer2:8761/eureka/,http://test:narc1234@eurekaServer1:8761/eureka/
   instance:
+    ip-address: ${local-ip}
+    instance-id: ${local-ip}:${server.port}
     prefer-ip-address: true
-    ip-address: ${spring.cloud.client.ipAddress}
-    instance-id: ${spring.cloud.client.ipAddress}:${server.port}
-    status-page-url: http://${spring.cloud.client.ipAddress}:${server.port}/alibaba/swagger-ui.html
+    status-page-url: http://${local-ip}:${server.port}/alibaba/swagger-ui.html
