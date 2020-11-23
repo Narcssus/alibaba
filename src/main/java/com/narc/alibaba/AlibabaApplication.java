@@ -13,10 +13,10 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 @SpringBootApplication
 @Slf4j
 @EnableEurekaClient
-public class SwaggerApplication extends SpringBootServletInitializer {
+public class AlibabaApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
-        SpringApplication.run(SwaggerApplication.class, args);
+        SpringApplication.run(AlibabaApplication.class, args);
     }
 
 }

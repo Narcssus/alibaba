@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,11 +36,20 @@ public class AlimamaController {
         return alimamaService.tranShareWord(paramObject);
     }
 
-    @ApiOperation(value = "淘口令转链", notes = "淘口令转链")
+    @ApiOperation(value = "test", notes = "test")
     @GetMapping(value = "/test")
     public String test(String param) {
         String paramObject = HttpUtils.sendGet(param);
         return paramObject;
+    }
+
+    @Value("${from}")
+    private String value;
+
+    @ApiOperation(value = "test", notes = "test")
+    @GetMapping(value = "/test2")
+    public String test2(String param) {
+        return value;
     }
 
 
