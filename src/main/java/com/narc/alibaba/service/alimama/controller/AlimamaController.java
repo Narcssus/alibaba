@@ -32,6 +32,7 @@ public class AlimamaController {
     @ApiOperation(value = "淘口令转链", notes = "淘口令转链")
     @GetMapping(value = "/tranShareWord")
     public JSONObject tranShareWord(String param) {
+        log.info("淘口令转链收到请求：{}", param);
         JSONObject paramObject = JSON.parseObject(param);
         return alimamaService.tranShareWord(paramObject);
     }
@@ -51,8 +52,6 @@ public class AlimamaController {
 //    public String test2(String param) {
 //        return value;
 //    }
-
-
 
 
 }
