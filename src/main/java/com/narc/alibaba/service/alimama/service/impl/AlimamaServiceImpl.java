@@ -110,10 +110,15 @@ public class AlimamaServiceImpl implements AlimamaService {
 //        return res;
 //    }
 
+    public static void main(String[] args) {
+        System.out.println(getItemId("https:\\/\\/item.taobao.com\\/item.htm?ut_sk=1.XGGbB\\/zdPqUDAPYmrex1D0u%2B_21380790_1606614854934.TaoPassword-Weixin.DETAIL_FISSION_COUPON&preSpm=share&suid=CD4ED24F-7864-4283-80B0-08521429E2B6&id=601636637508&poplayer=fission_sub_coupon&sellerId=1885672960&token=8845609da93da616e8848abbd7bd045fb265ac8f6c5b214b609b4cea74361f82d78e1347a43f732e4767ac14f7a1838dc8316b5edae173b48afd47bab6f049f788342e415af1cc5020692deb991bcd4e4733d8567a40dc79ee42cf10f3701fe1&sourceType=item&detailSharePosition=interactBar&shareUniqueId=5794075827&un=698f4d817eb93d5f28b5e1fb31f54c83&share_crt_v=1&spm=a2159r.13376460.0.0&sp_tk=UWJiNmNudXVoZTQ=&poplayertoken=1606636945678&bxsign=tcdnyz1p8NkDQ6uTq-ZZoPgPeFP_Jr9NHV7IPGwuDV7ewgBMREstB80gnCPF6l3Mp-QF9HvlK6k2F4tsjLafwEN940Tfe1C0TOSc-8y1YUh2HE"));
+    }
+
+
     private static String getItemId(String content) {
         String res = "";
         if (content.contains("item.taobao.com")) {
-            for (int i = content.indexOf("id=") + 3; i < content.length(); i++) {
+            for (int i = content.indexOf("&id=") + 4; i < content.length(); i++) {
                 char c = content.charAt(i);
                 if (c == '&') {
                     break;
@@ -240,6 +245,10 @@ public class AlimamaServiceImpl implements AlimamaService {
 
     private TbkDgMaterialOptionalResponse.MapData getItemByTitleAndId(String itemName, String itemId) {
         TaobaoClient client = new DefaultTaobaoClient(apiUrl, appKey, appSecret);
+        if(itemName.contains("】")){
+            itemName = itemName.substring(itemName.lastIndexOf("【")+1,itemName.lastIndexOf("】"));
+        }
+        log.debug("调用淘宝接口搜索商品,名称：{}，id:{}", itemName, itemId);
         try {
             TbkDgMaterialOptionalRequest req = new TbkDgMaterialOptionalRequest();
             long pageNo = 1L;
@@ -299,19 +308,6 @@ public class AlimamaServiceImpl implements AlimamaService {
             return res;
         }
         return null;
-    }
-
-    public static void main(String[] args) {
-//        System.out.println(findWord("6￥xomvcmTK0Fx￥回Tá0宔或點几url链 https://m.tb.cn/h.4Vi2ibl 至浏览er【阻门器门阻门挡顶门防盗家用女生安全防狼独居必备神器酒店防开门】",
-//                "￥₤$¢"));
-//        String word = findWord("6￥xomvcmTK0Fx￥回Tá0宔或點几url链 https://m.tb.cn/h.4Vi2ibl 至浏览er【阻门器门阻门挡顶门防盗家用女生安全防狼独居必备神器酒店防开门】",
-//                "￥₤$¢");
-//        String url = "https://api.taokouling.com/tkl/tkljm?apikey=bwZnYFuzyD&tkl=" + word;
-//        String httpContent = HttpUtils.sendGet(url);
-//        System.out.println(httpContent);
-//        System.out.println(getItemIdBy3rd("https:\\/\\/a.m.tmall.com\\/i625281406528.htm?ut_sk=1.XKiuzxiIcxADAEWERcZzQVsL_12615387_1605790808772.Copy.tm_detail&suid=2909C163-DADF-4D65-B870-1D2BA78A6B52&sourceType=item&un=43bede4083e45fbfe8f55b3b63c56d8b&share_crt_v=1&spm=a2159r.13376460.0.0&sp_tk=R1hiSGNtVEtUbmc=&bxsign=tcdcS5djTDasOyOHncs0A-xCo-I5Vlmo8y5FtzDIwiJwrqKvZAuAUVuu3VDT9xZxHHRb6GGy2F9SCxIEGa3GMzXctId4TaZQotcBC8u1Y2w2x0"));
-//        System.out.println(getItemIdBy3rd("https:\\/\\/item.taobao.com\\/item.htm?ut_sk=1.Wqpl06GQzL8DAADw52mhSySs_21380790_1605591641315.TaoPassword-Weixin.1&id=625281406528&sourceType=item&price=20.9-139&origin_price=41.8-278&suid=8B0A6538-9231-4D8F-831E-5D2537E0172E&shareUniqueId=5474070043&un=74b1d4c8442119419f2917200ca32a93&share_crt_v=1&spm=a2159r.13376460.0.0&sp_tk=blkzQ2NPcVhhd00=&bxsign=tcd8iPvTqy_5E9vyPGI5MC0uP2Whjc0jqjS8TgV7FZ9LmB71UCl0CPrBZUzwnuF5-t_0eICquyJrVG_9wf1TQGIedvz4RMk24kFdPKf7xumors"));
-        System.out.println(getWordByContent("6￥xomvcmTK0Fx￥回Tá0宔或點几url链 https://m.tb.cn/h.4Vi2ibl 至浏览er【阻"));
     }
 
 }

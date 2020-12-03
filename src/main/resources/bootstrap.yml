@@ -12,7 +12,7 @@ spring:
         service-id: config # 配置中心的名字，直接配置名称可以在配置中心集群的时候实现负载均衡
       profile: base # 对应配置中心文件的${profile}部分
 
-local-ip: 106.52.120.197
+local-ip: localhost
 
 eureka:
   client:
