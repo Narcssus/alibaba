@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.narc.alibaba.service.alimama.service.AlimamaService;
 import com.narc.alibaba.utils.HttpUtils;
-import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
 import com.taobao.api.request.TbkCouponGetRequest;
@@ -16,10 +15,10 @@ import com.taobao.api.response.TbkDgMaterialOptionalResponse;
 import com.taobao.api.response.TbkItemInfoGetResponse;
 import com.taobao.api.response.TbkTpwdCreateResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -43,10 +42,15 @@ public class AlimamaServiceImpl implements AlimamaService {
     @Value("${alimamaServer.adzoneId}")
     private Long adzoneId;
 
+    private static final String TYPE_VIP = "VIP";
+    private static final String TYPE_NORMAL = "NORMAL";
+    private static final String TYPE_NULL = "NULL";
+
     @Override
     public JSONObject tranShareWord(JSONObject paramObject) {
         String originalWord = paramObject.getString("originalWord");
-        String res = tranShareWord(originalWord);
+        String type = paramObject.getString("type");
+        String res = tranShareWord(originalWord, type);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("tranShareWord", res);
         return jsonObject;
@@ -116,6 +120,9 @@ public class AlimamaServiceImpl implements AlimamaService {
 
 
     private static String getItemId(String content) {
+        if (StringUtils.isEmpty(content)) {
+            return null;
+        }
         String res = "";
         if (content.contains("item.taobao.com")) {
             for (int i = content.indexOf("&id=") + 4; i < content.length(); i++) {
@@ -152,14 +159,12 @@ public class AlimamaServiceImpl implements AlimamaService {
         return null;
     }
 
-    private String tranShareWord(String originalWord) {
+    private String tranShareWord(String originalWord, String type) {
         try {
             TaobaoClient client = new DefaultTaobaoClient(apiUrl, appKey, appSecret);
-
-
             TbkDgMaterialOptionalResponse.MapData mapData = getItem(originalWord);
             if (mapData == null) {
-                return "没有找到该商品";
+                return "该商品不在优惠库中或输入淘口令错误";
             }
             String itemUrl = mapData.getCouponShareUrl();
             if (StringUtils.isEmpty(itemUrl)) {
@@ -168,7 +173,7 @@ public class AlimamaServiceImpl implements AlimamaService {
             itemUrl = "https:" + itemUrl;
             log.info("itemUrl=" + itemUrl);
 
-            String tickets = "无优惠券";
+            String tickets = "";
             //查询有无优惠券
             try {
                 TbkCouponGetRequest req = new TbkCouponGetRequest();
@@ -180,7 +185,7 @@ public class AlimamaServiceImpl implements AlimamaService {
                     tickets = data.getCouponAmount() + "元";
                 }
             } catch (Exception e) {
-
+                log.error("查询优惠券失败", e);
             }
 
             TbkTpwdCreateRequest req2 = new TbkTpwdCreateRequest();
@@ -189,28 +194,66 @@ public class AlimamaServiceImpl implements AlimamaService {
             TbkTpwdCreateResponse response2 = client.execute(req2);
             TbkTpwdCreateResponse.MapData res2 = response2.getData();
             String model = res2.getModel();
-            String rate = mapData.getCommissionRate();
             StringBuilder sb = new StringBuilder();
             sb.append(model).append("\r\n");
-            if (!StringUtils.isEmpty(rate)) {
-                BigDecimal a = new BigDecimal(rate);
-                a = a.multiply(new BigDecimal(0.9));
-                BigDecimal b = a.divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN);
-                sb.append("==================").append("\r\n");
-                sb.append("返现率为").append(b.toPlainString()).append("%").append("\r\n");
-                BigDecimal c = new BigDecimal(mapData.getReservePrice());
-                BigDecimal d = c.multiply(b).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN);
-                sb.append("==================").append("\r\n");
-                sb.append("支付").append(c.toPlainString()).append("元，");
-                sb.append("预计返现为").append(d.toPlainString()).append("元").append("\r\n");
-                sb.append("==================").append("\r\n");
-                sb.append("优惠券：").append(tickets);
+            if (!StringUtils.isEmpty(mapData.getCommissionRate())) {
+                if (!TYPE_NULL.equals(type)) {
+                    BigDecimal rate = new BigDecimal(mapData.getCommissionRate());
+                    rate = rate.multiply(new BigDecimal(0.9));
+                    rate = rate.divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN);
+                    BigDecimal price = new BigDecimal(mapData.getSalePrice());
+                    rate = doDiscountStrategy(rate, price, type);
+                    BigDecimal discount = price.multiply(rate);
+                    sb.append("==================").append("\r\n");
+                    sb.append("返现率为").append(rate.toPlainString()).append("%").append("\r\n");
+
+                    sb.append("==================").append("\r\n");
+                    sb.append("支付").append(price.toPlainString()).append("元，");
+                    sb.append("预计返现为").append(discount.toPlainString()).append("元").append("\r\n");
+                }
+                if (StringUtils.isNotBlank(tickets)) {
+                    sb.append("==================").append("\r\n");
+                    sb.append("优惠券：").append(tickets);
+                }
             }
             return sb.toString();
         } catch (Exception e) {
             log.error("系统失败", e);
-            return "系统失败";
+            return "系统失败,请稍后再试";
         }
+    }
+
+    private BigDecimal doDiscountStrategy(BigDecimal rate, BigDecimal price, String type) {
+        if (TYPE_VIP.equals(type)) {
+            return rate;
+        }
+        //执行策略
+        //返现小于1元，不赚钱
+        if (rate.multiply(price).compareTo(new BigDecimal(1)) <= 0) {
+            return rate;
+        }
+        //返现1-5元，赚10%
+        if (rate.multiply(price).compareTo(new BigDecimal(5)) <= 0) {
+            return rate.multiply(new BigDecimal(1 - 0.1));
+        }
+        //返现5-10元，赚15%
+        if (rate.multiply(price).compareTo(new BigDecimal(10)) <= 0) {
+            return rate.multiply(new BigDecimal(1 - 0.15));
+        }
+        //返现10-25元，赚25%
+        if (rate.multiply(price).compareTo(new BigDecimal(25)) <= 0) {
+            return rate.multiply(new BigDecimal(1 - 0.25));
+        }
+        //返现25-50元，赚40%
+        if (rate.multiply(price).compareTo(new BigDecimal(50)) <= 0) {
+            return rate.multiply(new BigDecimal(1 - 0.4));
+        }
+        //返现50-100元，赚50%
+        if (rate.multiply(price).compareTo(new BigDecimal(100)) <= 0) {
+            return rate.multiply(new BigDecimal(1 - 0.5));
+        }
+        //返现100元以上，赚60%
+        return rate.multiply(new BigDecimal(1 - 0.6));
     }
 
     private TbkDgMaterialOptionalResponse.MapData getItem(String originalWord) {
@@ -245,8 +288,8 @@ public class AlimamaServiceImpl implements AlimamaService {
 
     private TbkDgMaterialOptionalResponse.MapData getItemByTitleAndId(String itemName, String itemId) {
         TaobaoClient client = new DefaultTaobaoClient(apiUrl, appKey, appSecret);
-        if(itemName.contains("】")){
-            itemName = itemName.substring(itemName.lastIndexOf("【")+1,itemName.lastIndexOf("】"));
+        if (itemName.contains("】")) {
+            itemName = itemName.substring(itemName.lastIndexOf("【") + 1, itemName.lastIndexOf("】"));
         }
         log.debug("调用淘宝接口搜索商品,名称：{}，id:{}", itemName, itemId);
         try {
@@ -260,7 +303,9 @@ public class AlimamaServiceImpl implements AlimamaService {
             TbkDgMaterialOptionalResponse response;
             do {
                 response = client.execute(req);
-                res.addAll(response.getResultList());
+                if (response != null && !CollectionUtils.isEmpty(response.getResultList())) {
+                    res.addAll(response.getResultList());
+                }
                 pageNo++;
             } while (response.getTotalResults() > pageNo * 100L);
             for (TbkDgMaterialOptionalResponse.MapData mapData : res) {
@@ -276,6 +321,9 @@ public class AlimamaServiceImpl implements AlimamaService {
     }
 
     private String getNameById(String id) {
+        if (StringUtils.isEmpty(id)) {
+            return null;
+        }
         try {
             TaobaoClient client = new DefaultTaobaoClient(apiUrl, appKey, appSecret);
             TbkItemInfoGetRequest req = new TbkItemInfoGetRequest();
