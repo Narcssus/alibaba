@@ -17,7 +17,7 @@ local-ip: localhost
 eureka:
   client:
     service-url:
-      defaultZone: http://test:narc1234@eurekaServer2:8761/eureka/,http://test:narc1234@eurekaServer1:8761/eureka/
+      defaultZone: http://test:narc1234@106.53.247.226:8761/eureka/,http://test:narc1234@106.52.120.197:8761/eureka/
   instance:
     ip-address: ${local-ip}
     instance-id: ${local-ip}:${server.port}

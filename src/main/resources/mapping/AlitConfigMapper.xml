@@ -3,8 +3,8 @@
 <mapper namespace="com.narc.alibaba.service.alimama.dao.mapper.AlitConfigMapper">
   <resultMap id="BaseResultMap" type="com.narc.alibaba.service.alimama.entity.AlitConfig">
     <id column="ID" jdbcType="INTEGER" property="id" />
-    <result column="KEY" jdbcType="VARCHAR" property="key" />
-    <result column="VALUE" jdbcType="VARCHAR" property="value" />
+    <result column="CONFIG_KEY" jdbcType="VARCHAR" property="configKey" />
+    <result column="CONFIG_VALUE" jdbcType="VARCHAR" property="configValue" />
     <result column="CREATED_DATETIME" jdbcType="TIMESTAMP" property="createdDatetime" />
     <result column="CREATED_ID" jdbcType="VARCHAR" property="createdId" />
     <result column="MODIFIED_DATETIME" jdbcType="TIMESTAMP" property="modifiedDatetime" />
@@ -69,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    ID, KEY, VALUE, CREATED_DATETIME, CREATED_ID, MODIFIED_DATETIME, MODIFIED_ID
+    ID, CONFIG_KEY, CONFIG_VALUE, CREATED_DATETIME, CREATED_ID, MODIFIED_DATETIME, MODIFIED_ID
   </sql>
   <select id="selectByExample" parameterType="com.narc.alibaba.service.alimama.entity.AlitConfigExample" resultMap="BaseResultMap">
     select
@@ -102,10 +102,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.narc.alibaba.service.alimama.entity.AlitConfig">
-    insert into ALIT_CONFIG (ID, KEY, VALUE, 
+    insert into ALIT_CONFIG (ID, CONFIG_KEY, CONFIG_VALUE, 
       CREATED_DATETIME, CREATED_ID, MODIFIED_DATETIME, 
       MODIFIED_ID)
-    values (#{id,jdbcType=INTEGER}, #{key,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{configKey,jdbcType=VARCHAR}, #{configValue,jdbcType=VARCHAR}, 
       #{createdDatetime,jdbcType=TIMESTAMP}, #{createdId,jdbcType=VARCHAR}, #{modifiedDatetime,jdbcType=TIMESTAMP}, 
       #{modifiedId,jdbcType=VARCHAR})
   </insert>
@@ -115,11 +115,11 @@
       <if test="id != null">
         ID,
       </if>
-      <if test="key != null">
-        KEY,
+      <if test="configKey != null">
+        CONFIG_KEY,
       </if>
-      <if test="value != null">
-        VALUE,
+      <if test="configValue != null">
+        CONFIG_VALUE,
       </if>
       <if test="createdDatetime != null">
         CREATED_DATETIME,
@@ -138,11 +138,11 @@
       <if test="id != null">
         #{id,jdbcType=INTEGER},
       </if>
-      <if test="key != null">
-        #{key,jdbcType=VARCHAR},
+      <if test="configKey != null">
+        #{configKey,jdbcType=VARCHAR},
       </if>
-      <if test="value != null">
-        #{value,jdbcType=VARCHAR},
+      <if test="configValue != null">
+        #{configValue,jdbcType=VARCHAR},
       </if>
       <if test="createdDatetime != null">
         #{createdDatetime,jdbcType=TIMESTAMP},
@@ -170,11 +170,11 @@
       <if test="record.id != null">
         ID = #{record.id,jdbcType=INTEGER},
       </if>
-      <if test="record.key != null">
-        KEY = #{record.key,jdbcType=VARCHAR},
+      <if test="record.configKey != null">
+        CONFIG_KEY = #{record.configKey,jdbcType=VARCHAR},
       </if>
-      <if test="record.value != null">
-        VALUE = #{record.value,jdbcType=VARCHAR},
+      <if test="record.configValue != null">
+        CONFIG_VALUE = #{record.configValue,jdbcType=VARCHAR},
       </if>
       <if test="record.createdDatetime != null">
         CREATED_DATETIME = #{record.createdDatetime,jdbcType=TIMESTAMP},
@@ -196,8 +196,8 @@
   <update id="updateByExample" parameterType="map">
     update ALIT_CONFIG
     set ID = #{record.id,jdbcType=INTEGER},
-      KEY = #{record.key,jdbcType=VARCHAR},
-      VALUE = #{record.value,jdbcType=VARCHAR},
+      CONFIG_KEY = #{record.configKey,jdbcType=VARCHAR},
+      CONFIG_VALUE = #{record.configValue,jdbcType=VARCHAR},
       CREATED_DATETIME = #{record.createdDatetime,jdbcType=TIMESTAMP},
       CREATED_ID = #{record.createdId,jdbcType=VARCHAR},
       MODIFIED_DATETIME = #{record.modifiedDatetime,jdbcType=TIMESTAMP},
@@ -209,11 +209,11 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.narc.alibaba.service.alimama.entity.AlitConfig">
     update ALIT_CONFIG
     <set>
-      <if test="key != null">
-        KEY = #{key,jdbcType=VARCHAR},
+      <if test="configKey != null">
+        CONFIG_KEY = #{configKey,jdbcType=VARCHAR},
       </if>
-      <if test="value != null">
-        VALUE = #{value,jdbcType=VARCHAR},
+      <if test="configValue != null">
+        CONFIG_VALUE = #{configValue,jdbcType=VARCHAR},
       </if>
       <if test="createdDatetime != null">
         CREATED_DATETIME = #{createdDatetime,jdbcType=TIMESTAMP},
@@ -232,8 +232,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.narc.alibaba.service.alimama.entity.AlitConfig">
     update ALIT_CONFIG
-    set KEY = #{key,jdbcType=VARCHAR},
-      VALUE = #{value,jdbcType=VARCHAR},
+    set CONFIG_KEY = #{configKey,jdbcType=VARCHAR},
+      CONFIG_VALUE = #{configValue,jdbcType=VARCHAR},
       CREATED_DATETIME = #{createdDatetime,jdbcType=TIMESTAMP},
       CREATED_ID = #{createdId,jdbcType=VARCHAR},
       MODIFIED_DATETIME = #{modifiedDatetime,jdbcType=TIMESTAMP},
@@ -241,7 +241,7 @@
     where ID = #{id,jdbcType=INTEGER}
   </update>
   <sql id="Batch_Insert_Column_List">
-    #{item.id}, #{item.key}, #{item.value}, #{item.createdDatetime}, #{item.createdId}, 
+    #{item.id}, #{item.configKey}, #{item.configValue}, #{item.createdDatetime}, #{item.createdId}, 
     #{item.modifiedDatetime}, #{item.modifiedId}
   </sql>
   <insert id="insertBatch" parameterType="java.util.List">

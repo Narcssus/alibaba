@@ -21,18 +21,18 @@ public class AlitConfig {
     private Integer id;
 
     /**
-     * KEY
+     * CONFIG_KEY
      * 配置项
      */
     @Size(max=255)
-    private String key;
+    private String configKey;
 
     /**
-     * VALUE
+     * CONFIG_VALUE
      * 配置值
      */
     @Size(max=255)
-    private String value;
+    private String configValue;
 
     /**
      * CREATED_DATETIME

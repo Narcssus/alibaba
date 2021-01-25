@@ -165,143 +165,143 @@ public class AlitConfigExample {
             return (Criteria) this;
         }
 
-        public Criteria andKeyIsNull() {
-            addCriterion("KEY is null");
+        public Criteria andConfigKeyIsNull() {
+            addCriterion("CONFIG_KEY is null");
             return (Criteria) this;
         }
 
-        public Criteria andKeyIsNotNull() {
-            addCriterion("KEY is not null");
+        public Criteria andConfigKeyIsNotNull() {
+            addCriterion("CONFIG_KEY is not null");
             return (Criteria) this;
         }
 
-        public Criteria andKeyEqualTo(String value) {
-            addCriterion("KEY =", value, "key");
+        public Criteria andConfigKeyEqualTo(String value) {
+            addCriterion("CONFIG_KEY =", value, "configKey");
             return (Criteria) this;
         }
 
-        public Criteria andKeyNotEqualTo(String value) {
-            addCriterion("KEY <>", value, "key");
+        public Criteria andConfigKeyNotEqualTo(String value) {
+            addCriterion("CONFIG_KEY <>", value, "configKey");
             return (Criteria) this;
         }
 
-        public Criteria andKeyGreaterThan(String value) {
-            addCriterion("KEY >", value, "key");
+        public Criteria andConfigKeyGreaterThan(String value) {
+            addCriterion("CONFIG_KEY >", value, "configKey");
             return (Criteria) this;
         }
 
-        public Criteria andKeyGreaterThanOrEqualTo(String value) {
-            addCriterion("KEY >=", value, "key");
+        public Criteria andConfigKeyGreaterThanOrEqualTo(String value) {
+            addCriterion("CONFIG_KEY >=", value, "configKey");
             return (Criteria) this;
         }
 
-        public Criteria andKeyLessThan(String value) {
-            addCriterion("KEY <", value, "key");
+        public Criteria andConfigKeyLessThan(String value) {
+            addCriterion("CONFIG_KEY <", value, "configKey");
             return (Criteria) this;
         }
 
-        public Criteria andKeyLessThanOrEqualTo(String value) {
-            addCriterion("KEY <=", value, "key");
+        public Criteria andConfigKeyLessThanOrEqualTo(String value) {
+            addCriterion("CONFIG_KEY <=", value, "configKey");
             return (Criteria) this;
         }
 
-        public Criteria andKeyLike(String value) {
-            addCriterion("KEY like", value, "key");
+        public Criteria andConfigKeyLike(String value) {
+            addCriterion("CONFIG_KEY like", value, "configKey");
             return (Criteria) this;
         }
 
-        public Criteria andKeyNotLike(String value) {
-            addCriterion("KEY not like", value, "key");
+        public Criteria andConfigKeyNotLike(String value) {
+            addCriterion("CONFIG_KEY not like", value, "configKey");
             return (Criteria) this;
         }
 
-        public Criteria andKeyIn(List<String> values) {
-            addCriterion("KEY in", values, "key");
+        public Criteria andConfigKeyIn(List<String> values) {
+            addCriterion("CONFIG_KEY in", values, "configKey");
             return (Criteria) this;
         }
 
-        public Criteria andKeyNotIn(List<String> values) {
-            addCriterion("KEY not in", values, "key");
+        public Criteria andConfigKeyNotIn(List<String> values) {
+            addCriterion("CONFIG_KEY not in", values, "configKey");
             return (Criteria) this;
         }
 
-        public Criteria andKeyBetween(String value1, String value2) {
-            addCriterion("KEY between", value1, value2, "key");
+        public Criteria andConfigKeyBetween(String value1, String value2) {
+            addCriterion("CONFIG_KEY between", value1, value2, "configKey");
             return (Criteria) this;
         }
 
-        public Criteria andKeyNotBetween(String value1, String value2) {
-            addCriterion("KEY not between", value1, value2, "key");
+        public Criteria andConfigKeyNotBetween(String value1, String value2) {
+            addCriterion("CONFIG_KEY not between", value1, value2, "configKey");
             return (Criteria) this;
         }
 
-        public Criteria andValueIsNull() {
-            addCriterion("VALUE is null");
+        public Criteria andConfigValueIsNull() {
+            addCriterion("CONFIG_VALUE is null");
             return (Criteria) this;
         }
 
-        public Criteria andValueIsNotNull() {
-            addCriterion("VALUE is not null");
+        public Criteria andConfigValueIsNotNull() {
+            addCriterion("CONFIG_VALUE is not null");
             return (Criteria) this;
         }
 
-        public Criteria andValueEqualTo(String value) {
-            addCriterion("VALUE =", value, "value");
+        public Criteria andConfigValueEqualTo(String value) {
+            addCriterion("CONFIG_VALUE =", value, "configValue");
             return (Criteria) this;
         }
 
-        public Criteria andValueNotEqualTo(String value) {
-            addCriterion("VALUE <>", value, "value");
+        public Criteria andConfigValueNotEqualTo(String value) {
+            addCriterion("CONFIG_VALUE <>", value, "configValue");
             return (Criteria) this;
         }
 
-        public Criteria andValueGreaterThan(String value) {
-            addCriterion("VALUE >", value, "value");
+        public Criteria andConfigValueGreaterThan(String value) {
+            addCriterion("CONFIG_VALUE >", value, "configValue");
             return (Criteria) this;
         }
 
-        public Criteria andValueGreaterThanOrEqualTo(String value) {
-            addCriterion("VALUE >=", value, "value");
+        public Criteria andConfigValueGreaterThanOrEqualTo(String value) {
+            addCriterion("CONFIG_VALUE >=", value, "configValue");
             return (Criteria) this;
         }
 
-        public Criteria andValueLessThan(String value) {
-            addCriterion("VALUE <", value, "value");
+        public Criteria andConfigValueLessThan(String value) {
+            addCriterion("CONFIG_VALUE <", value, "configValue");
             return (Criteria) this;
         }
 
-        public Criteria andValueLessThanOrEqualTo(String value) {
-            addCriterion("VALUE <=", value, "value");
+        public Criteria andConfigValueLessThanOrEqualTo(String value) {
+            addCriterion("CONFIG_VALUE <=", value, "configValue");
             return (Criteria) this;
         }
 
-        public Criteria andValueLike(String value) {
-            addCriterion("VALUE like", value, "value");
+        public Criteria andConfigValueLike(String value) {
+            addCriterion("CONFIG_VALUE like", value, "configValue");
             return (Criteria) this;
         }
 
-        public Criteria andValueNotLike(String value) {
-            addCriterion("VALUE not like", value, "value");
+        public Criteria andConfigValueNotLike(String value) {
+            addCriterion("CONFIG_VALUE not like", value, "configValue");
             return (Criteria) this;
         }
 
-        public Criteria andValueIn(List<String> values) {
-            addCriterion("VALUE in", values, "value");
+        public Criteria andConfigValueIn(List<String> values) {
+            addCriterion("CONFIG_VALUE in", values, "configValue");
             return (Criteria) this;
         }
 
-        public Criteria andValueNotIn(List<String> values) {
-            addCriterion("VALUE not in", values, "value");
+        public Criteria andConfigValueNotIn(List<String> values) {
+            addCriterion("CONFIG_VALUE not in", values, "configValue");
             return (Criteria) this;
         }
 
-        public Criteria andValueBetween(String value1, String value2) {
-            addCriterion("VALUE between", value1, value2, "value");
+        public Criteria andConfigValueBetween(String value1, String value2) {
+            addCriterion("CONFIG_VALUE between", value1, value2, "configValue");
             return (Criteria) this;
         }
 
-        public Criteria andValueNotBetween(String value1, String value2) {
-            addCriterion("VALUE not between", value1, value2, "value");
+        public Criteria andConfigValueNotBetween(String value1, String value2) {
+            addCriterion("CONFIG_VALUE not between", value1, value2, "configValue");
             return (Criteria) this;
         }
 

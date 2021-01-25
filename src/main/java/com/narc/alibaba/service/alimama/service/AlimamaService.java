@@ -2,6 +2,8 @@ package com.narc.alibaba.service.alimama.service;
 
 import com.alibaba.fastjson.JSONObject;
 
+import java.util.Date;
+
 /**
  * @author Narcssus
  * @version 1.0
@@ -15,4 +17,5 @@ public interface AlimamaService {
      */
     JSONObject tranShareWord(JSONObject paramObject);
 
+    void getOrders(Date startTime,Date endTime);
 }

@@ -28,12 +28,12 @@ public class AlitConfigDaoService {
 
     public String getValueByKey(String key) {
         AlitConfigExample example = new AlitConfigExample();
-        example.createCriteria().andKeyEqualTo(key);
+        example.createCriteria().andConfigKeyEqualTo(key);
         List<AlitConfig> list = alitConfigMapper.selectByExample(example);
         if (CollectionUtils.isEmpty(list) || list.get(0) == null) {
             return "";
         }
-        return list.get(0).getValue();
+        return list.get(0).getConfigValue();
     }
 
 }

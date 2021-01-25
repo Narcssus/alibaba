@@ -1,8 +1,13 @@
 package com.narc.alibaba.service.alimama.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.narc.alibaba.service.alimama.dao.service.AlitConfigDaoService;
+import com.narc.alibaba.service.alimama.dao.service.AlitPublisherOrderDaoService;
+import com.narc.alibaba.service.alimama.entity.AlitPublisherOrder;
 import com.narc.alibaba.service.alimama.service.AlimamaService;
+import com.narc.alibaba.utils.DateUtils;
 import com.narc.alibaba.utils.HttpUtils;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
@@ -16,12 +21,14 @@ import com.taobao.api.response.TbkItemInfoGetResponse;
 import com.taobao.api.response.TbkTpwdCreateResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,6 +52,14 @@ public class AlimamaServiceImpl implements AlimamaService {
     private static final String TYPE_VIP = "VIP";
     private static final String TYPE_NORMAL = "NORMAL";
     private static final String TYPE_NULL = "NULL";
+    private static final String URL_CHAR = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ:/.?=&";
+    private static final String WORDS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    @Autowired
+    private AlitConfigDaoService alitConfigDaoService;
+    @Autowired
+    private AlitPublisherOrderDaoService alitPublisherOrderDaoService;
+
 
     @Override
     public JSONObject tranShareWord(JSONObject paramObject) {
@@ -56,8 +71,73 @@ public class AlimamaServiceImpl implements AlimamaService {
         return jsonObject;
     }
 
-    private static final String URL_CHAR = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ:/.?=&";
-    private static final String WORDS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    @Override
+    public void getOrders(Date startTime, Date endTime) {
+        String uid = alitConfigDaoService.getValueByKey("taobao_user_id");
+        String start_time = DateUtils.convertDateToStr(startTime, DateUtils.FORMAT_19);
+        String end_time = DateUtils.convertDateToStr(endTime, DateUtils.FORMAT_19);
+        JSONArray array = getPaidOrder(uid, start_time, end_time);
+        for (int i = 0; i < array.size(); i++) {
+            JSONObject jsonObject = array.getJSONObject(i);
+            AlitPublisherOrder order = new AlitPublisherOrder();
+            order.setTradeId(jsonObject.getString("trade_id"));
+            order.setTradeParentId(jsonObject.getString("trade_parent_id"));
+            order.setItemId(jsonObject.getString("item_id"));
+            order.setItemNum(jsonObject.getInteger("item_num"));
+            order.setItemTitle(jsonObject.getString("item_title"));
+            order.setTkCreateTime(jsonObject.getDate("tk_create_time"));
+            order.setTbPaidTime(jsonObject.getDate("tb_paid_time"));
+            order.setTotalCommissionRate(jsonObject.getBigDecimal("total_commission_rate"));
+            order.setAlipayTotalPrice(jsonObject.getBigDecimal("alipay_total_price"));
+            order.setSubsidyRate(jsonObject.getString("subsidy_rate"));
+            order.setTkTotalRate(jsonObject.getString("tk_total_rate"));
+            order.setPubSharePreFee(jsonObject.getBigDecimal("pub_share_pre_fee"));
+            order.setAlimamaRate(jsonObject.getBigDecimal("alimama_rate"));
+            order.setTkStatus(jsonObject.getString("tk_status"));
+            order.setItemPrice(jsonObject.getBigDecimal("item_price"));
+            if (alitPublisherOrderDaoService.isExistKey(order.getTradeId())) {
+                alitPublisherOrderDaoService.updateByPrimaryKeySelective(order);
+            } else {
+                alitPublisherOrderDaoService.insertOne(order);
+            }
+        }
+    }
+
+    private static JSONArray getPaidOrder(String uid, String start_time, String end_time) {
+        JSONArray resArray = new JSONArray();
+        try {
+            String url = "https://api.taokouling.com/tbk/TbkScOrderDetailsGet";
+            JSONObject req = new JSONObject();
+            req.put("uid", uid);
+            req.put("start_time", start_time);
+            req.put("end_time", end_time);
+            req.put("query_type", "2");
+            req.put("page_size", 20);
+            String res = HttpUtils.httpGet(url, req);
+            JSONObject data = JSON.parseObject(res).getJSONObject("data");
+            JSONArray jsonArray = new JSONArray();
+            if (data.get("results") instanceof JSONArray) {
+                return resArray;
+            } else {
+                jsonArray = data.getJSONObject("results").getJSONArray("publisher_order_dto");
+            }
+
+
+            resArray.addAll(jsonArray);
+            while (data.getBooleanValue("has_next")) {
+                req.put("position_index", data.getString("position_index"));
+                req.put("jump_type", "1");
+                res = HttpUtils.httpGet(url, req);
+                data = JSON.parseObject(res).getJSONObject("data");
+                jsonArray = JSON.parseObject(res).getJSONObject("data")
+                        .getJSONObject("results").getJSONArray("publisher_order_dto");
+                resArray.addAll(jsonArray);
+            }
+        } catch (Exception e) {
+            log.error("查询订单失败", e);
+        }
+        return resArray;
+    }
 
     private static String getUrlByWord(String word) {
         String url = "";
@@ -102,59 +182,44 @@ public class AlimamaServiceImpl implements AlimamaService {
         return jsonObject.getString("title");
     }
 
-//    private static String getItemId(String content) {
-//        String res = "";
-//        for (int i = content.indexOf("https://a.m.tmall.com/") + 23; i < content.length(); i++) {
-//            char c = content.charAt(i);
-//            if (c == '.') {
-//                break;
-//            }
-//            res += c;
-//        }
-//        return res;
-//    }
-
-    public static void main(String[] args) {
-        System.out.println(getItemId("https:\\/\\/item.taobao.com\\/item.htm?ut_sk=1.XGGbB\\/zdPqUDAPYmrex1D0u%2B_21380790_1606614854934.TaoPassword-Weixin.DETAIL_FISSION_COUPON&preSpm=share&suid=CD4ED24F-7864-4283-80B0-08521429E2B6&id=601636637508&poplayer=fission_sub_coupon&sellerId=1885672960&token=8845609da93da616e8848abbd7bd045fb265ac8f6c5b214b609b4cea74361f82d78e1347a43f732e4767ac14f7a1838dc8316b5edae173b48afd47bab6f049f788342e415af1cc5020692deb991bcd4e4733d8567a40dc79ee42cf10f3701fe1&sourceType=item&detailSharePosition=interactBar&shareUniqueId=5794075827&un=698f4d817eb93d5f28b5e1fb31f54c83&share_crt_v=1&spm=a2159r.13376460.0.0&sp_tk=UWJiNmNudXVoZTQ=&poplayertoken=1606636945678&bxsign=tcdnyz1p8NkDQ6uTq-ZZoPgPeFP_Jr9NHV7IPGwuDV7ewgBMREstB80gnCPF6l3Mp-QF9HvlK6k2F4tsjLafwEN940Tfe1C0TOSc-8y1YUh2HE"));
-    }
-
-
     private static String getItemId(String content) {
         if (StringUtils.isEmpty(content)) {
             return null;
         }
-        String res = "";
+        StringBuilder res = new StringBuilder();
         if (content.contains("item.taobao.com")) {
             for (int i = content.indexOf("&id=") + 4; i < content.length(); i++) {
                 char c = content.charAt(i);
                 if (c == '&') {
                     break;
                 }
-                res += c;
+                res.append(c);
             }
-            return res;
+            return res.toString();
         }
         if (content.contains("a.m.tmall.com")) {
             String a = "https://a.m.tmall.com/";
-            for (int i = content.indexOf(a) + a.length() + 1; i < content.length(); i++) {
+            int index = content.indexOf(a) + a.length() + 1;
+            for (int i = index; i < content.length(); i++) {
                 char c = content.charAt(i);
                 if (c == '.') {
                     break;
                 }
-                res += c;
+                res.append(c);
             }
-            return res;
+            return res.toString();
         }
         if (content.contains("a.m.taobao.com")) {
             String a = "https://a.m.taobao.com/";
-            for (int i = content.indexOf(a) + a.length() + 1; i < content.length(); i++) {
+            int index = content.indexOf(a) + a.length() + 1;
+            for (int i = index; i < content.length(); i++) {
                 char c = content.charAt(i);
                 if (c == '.') {
                     break;
                 }
-                res += c;
+                res.append(c);
             }
-            return res;
+            return res.toString();
         }
         return null;
     }
@@ -307,7 +372,7 @@ public class AlimamaServiceImpl implements AlimamaService {
                     res.addAll(response.getResultList());
                 }
                 pageNo++;
-            } while (response.getTotalResults() > pageNo * 100L);
+            } while (response != null && response.getTotalResults() > pageNo * 100L);
             for (TbkDgMaterialOptionalResponse.MapData mapData : res) {
                 if (itemId.equals("" + mapData.getItemId())) {
                     return mapData;
@@ -340,20 +405,20 @@ public class AlimamaServiceImpl implements AlimamaService {
 
 
     private static String getWordByContent(String content) {
-        String res = "";
+        StringBuilder res = new StringBuilder();
         for (int i = 0; i < content.length(); i++) {
             char c = content.charAt(i);
             if (!WORDS.contains("" + c)) {
                 if (res.length() > 10) {
-                    return res;
+                    return res.toString();
                 }
-                res = "";
+                res = new StringBuilder();
                 continue;
             }
-            res += c;
+            res.append(c);
         }
         if (res.length() > 10) {
-            return res;
+            return res.toString();
         }
         return null;
     }

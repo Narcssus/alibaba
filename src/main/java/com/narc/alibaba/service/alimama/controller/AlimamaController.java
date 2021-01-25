@@ -3,6 +3,7 @@ package com.narc.alibaba.service.alimama.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.narc.alibaba.service.alimama.service.AlimamaService;
+import com.narc.alibaba.utils.DateUtils;
 import com.narc.alibaba.utils.HttpUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Date;
 
 /**
  * @author : Narcssus
@@ -39,9 +42,13 @@ public class AlimamaController {
 
     @ApiOperation(value = "test", notes = "test")
     @GetMapping(value = "/test")
-    public String test(String param) {
-        String paramObject = HttpUtils.sendGet(param);
-        return paramObject;
+    public String test(String startTime,String endTime) {
+
+        alimamaService.getOrders(
+                DateUtils.convertStrToDate(startTime,DateUtils.FORMAT_19),
+                DateUtils.convertStrToDate(endTime,DateUtils.FORMAT_19)
+        );
+        return "";
     }
 
 //    @Value("${from}")

@@ -8,15 +8,15 @@
   -->
   <resultMap id="BaseResultMap" type="com.narc.alibaba.service.alimama.entity.AlitConfig">
     <id column="ID" jdbcType="INTEGER" property="id" />
-    <result column="KEY" jdbcType="VARCHAR" property="key" />
-    <result column="VALUE" jdbcType="VARCHAR" property="value" />
+    <result column="CONFIG_KEY" jdbcType="VARCHAR" property="configKey" />
+    <result column="CONFIG_VALUE" jdbcType="VARCHAR" property="configValue" />
     <result column="CREATED_DATETIME" jdbcType="TIMESTAMP" property="createdDatetime" />
     <result column="CREATED_ID" jdbcType="VARCHAR" property="createdId" />
     <result column="MODIFIED_DATETIME" jdbcType="TIMESTAMP" property="modifiedDatetime" />
     <result column="MODIFIED_ID" jdbcType="VARCHAR" property="modifiedId" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, KEY, VALUE, CREATED_DATETIME, CREATED_ID, MODIFIED_DATETIME, MODIFIED_ID
+    ID, CONFIG_KEY, CONFIG_VALUE, CREATED_DATETIME, CREATED_ID, MODIFIED_DATETIME, MODIFIED_ID
   </sql>
   <!-- 该注释以下的内容不会被覆盖，请不要删除或修改此条注释内容-->
 </mapper>
