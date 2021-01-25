@@ -122,7 +122,6 @@ public class AlimamaServiceImpl implements AlimamaService {
                 jsonArray = data.getJSONObject("results").getJSONArray("publisher_order_dto");
             }
 
-
             resArray.addAll(jsonArray);
             while (data.getBooleanValue("has_next")) {
                 req.put("position_index", data.getString("position_index"));

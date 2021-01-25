@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.narc.alibaba.service.alimama.dao.mapper.AlitThreadCompetitionInfoMapper">
+  <resultMap id="BaseResultMap" type="com.narc.alibaba.service.alimama.entity.AlitThreadCompetitionInfo">
+    <id column="THREAD_ID" jdbcType="INTEGER" property="threadId" />
+    <result column="THREAD_NAME" jdbcType="VARCHAR" property="threadName" />
+    <result column="NOW_IP" jdbcType="VARCHAR" property="nowIp" />
+    <result column="LAST_RUN_TIME" jdbcType="TIMESTAMP" property="lastRunTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    THREAD_ID, THREAD_NAME, NOW_IP, LAST_RUN_TIME
+  </sql>
+  <select id="selectByExample" parameterType="com.narc.alibaba.service.alimama.entity.AlitThreadCompetitionInfoExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ALIT_THREAD_COMPETITION_INFO
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ALIT_THREAD_COMPETITION_INFO
+    where THREAD_ID = #{threadId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from ALIT_THREAD_COMPETITION_INFO
+    where THREAD_ID = #{threadId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.narc.alibaba.service.alimama.entity.AlitThreadCompetitionInfoExample">
+    delete from ALIT_THREAD_COMPETITION_INFO
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.narc.alibaba.service.alimama.entity.AlitThreadCompetitionInfo">
+    insert into ALIT_THREAD_COMPETITION_INFO (THREAD_ID, THREAD_NAME, NOW_IP, 
+      LAST_RUN_TIME)
+    values (#{threadId,jdbcType=INTEGER}, #{threadName,jdbcType=VARCHAR}, #{nowIp,jdbcType=VARCHAR}, 
+      #{lastRunTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.narc.alibaba.service.alimama.entity.AlitThreadCompetitionInfo">
+    insert into ALIT_THREAD_COMPETITION_INFO
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="threadId != null">
+        THREAD_ID,
+      </if>
+      <if test="threadName != null">
+        THREAD_NAME,
+      </if>
+      <if test="nowIp != null">
+        NOW_IP,
+      </if>
+      <if test="lastRunTime != null">
+        LAST_RUN_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="threadId != null">
+        #{threadId,jdbcType=INTEGER},
+      </if>
+      <if test="threadName != null">
+        #{threadName,jdbcType=VARCHAR},
+      </if>
+      <if test="nowIp != null">
+        #{nowIp,jdbcType=VARCHAR},
+      </if>
+      <if test="lastRunTime != null">
+        #{lastRunTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.narc.alibaba.service.alimama.entity.AlitThreadCompetitionInfoExample" resultType="java.lang.Long">
+    select count(*) from ALIT_THREAD_COMPETITION_INFO
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update ALIT_THREAD_COMPETITION_INFO
+    <set>
+      <if test="record.threadId != null">
+        THREAD_ID = #{record.threadId,jdbcType=INTEGER},
+      </if>
+      <if test="record.threadName != null">
+        THREAD_NAME = #{record.threadName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.nowIp != null">
+        NOW_IP = #{record.nowIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lastRunTime != null">
+        LAST_RUN_TIME = #{record.lastRunTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update ALIT_THREAD_COMPETITION_INFO
+    set THREAD_ID = #{record.threadId,jdbcType=INTEGER},
+      THREAD_NAME = #{record.threadName,jdbcType=VARCHAR},
+      NOW_IP = #{record.nowIp,jdbcType=VARCHAR},
+      LAST_RUN_TIME = #{record.lastRunTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.narc.alibaba.service.alimama.entity.AlitThreadCompetitionInfo">
+    update ALIT_THREAD_COMPETITION_INFO
+    <set>
+      <if test="threadName != null">
+        THREAD_NAME = #{threadName,jdbcType=VARCHAR},
+      </if>
+      <if test="nowIp != null">
+        NOW_IP = #{nowIp,jdbcType=VARCHAR},
+      </if>
+      <if test="lastRunTime != null">
+        LAST_RUN_TIME = #{lastRunTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where THREAD_ID = #{threadId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.narc.alibaba.service.alimama.entity.AlitThreadCompetitionInfo">
+    update ALIT_THREAD_COMPETITION_INFO
+    set THREAD_NAME = #{threadName,jdbcType=VARCHAR},
+      NOW_IP = #{nowIp,jdbcType=VARCHAR},
+      LAST_RUN_TIME = #{lastRunTime,jdbcType=TIMESTAMP}
+    where THREAD_ID = #{threadId,jdbcType=INTEGER}
+  </update>
+  <sql id="Batch_Insert_Column_List">
+    #{item.threadId}, #{item.threadName}, #{item.nowIp}, #{item.lastRunTime}
+  </sql>
+  <insert id="insertBatch" parameterType="java.util.List">
+    insert into ALIT_THREAD_COMPETITION_INFO(
+    <include refid="Base_Column_List" />
+    ) values
+    <foreach collection="list" index="index" item="item" separator=",">
+      (
+      <include refid="Batch_Insert_Column_List" />
+      )
+    </foreach>
+  </insert>
+</mapper>

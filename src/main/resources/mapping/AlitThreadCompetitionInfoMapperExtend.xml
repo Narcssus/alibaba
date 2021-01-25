@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.narc.alibaba.service.alimama.dao.mapper.AlitThreadCompetitionInfoMapperExtend">
+  <!--
+  该文件是由NarcMybatisGenerator自动生成的文件
+  建议将所有自定义的SQL保存在该文件中
+  请注意不要删除此文件的注释内容
+  -->
+  <resultMap id="BaseResultMap" type="com.narc.alibaba.service.alimama.entity.AlitThreadCompetitionInfo">
+    <id column="THREAD_ID" jdbcType="INTEGER" property="threadId" />
+    <result column="THREAD_NAME" jdbcType="VARCHAR" property="threadName" />
+    <result column="NOW_IP" jdbcType="VARCHAR" property="nowIp" />
+    <result column="LAST_RUN_TIME" jdbcType="TIMESTAMP" property="lastRunTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    THREAD_ID, THREAD_NAME, NOW_IP, LAST_RUN_TIME
+  </sql>
+  <!-- 该注释以下的内容不会被覆盖，请不要删除或修改此条注释内容-->
+</mapper>
