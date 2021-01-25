@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.narc.alibaba.service.alimama.dao.mapper.AlitPublisherOrderMapperExtend">
+  <!--
+  该文件是由NarcMybatisGenerator自动生成的文件
+  建议将所有自定义的SQL保存在该文件中
+  请注意不要删除此文件的注释内容
+  -->
+  <resultMap id="BaseResultMap" type="com.narc.alibaba.service.alimama.entity.AlitPublisherOrder">
+    <id column="TRADE_ID" jdbcType="VARCHAR" property="tradeId" />
+    <result column="TRADE_PARENT_ID" jdbcType="VARCHAR" property="tradeParentId" />
+    <result column="ITEM_ID" jdbcType="VARCHAR" property="itemId" />
+    <result column="ITEM_NUM" jdbcType="INTEGER" property="itemNum" />
+    <result column="ITEM_TITLE" jdbcType="VARCHAR" property="itemTitle" />
+    <result column="TK_CREATE_TIME" jdbcType="TIMESTAMP" property="tkCreateTime" />
+    <result column="TB_PAID_TIME" jdbcType="TIMESTAMP" property="tbPaidTime" />
+    <result column="TOTAL_COMMISSION_RATE" jdbcType="DECIMAL" property="totalCommissionRate" />
+    <result column="ALIPAY_TOTAL_PRICE" jdbcType="DECIMAL" property="alipayTotalPrice" />
+    <result column="SUBSIDY_RATE" jdbcType="VARCHAR" property="subsidyRate" />
+    <result column="TK_TOTAL_RATE" jdbcType="VARCHAR" property="tkTotalRate" />
+    <result column="PUB_SHARE_PRE_FEE" jdbcType="DECIMAL" property="pubSharePreFee" />
+    <result column="ALIMAMA_RATE" jdbcType="DECIMAL" property="alimamaRate" />
+    <result column="TK_STATUS" jdbcType="VARCHAR" property="tkStatus" />
+    <result column="ITEM_PRICE" jdbcType="DECIMAL" property="itemPrice" />
+    <result column="SENDER_ID" jdbcType="VARCHAR" property="senderId" />
+    <result column="SENDER_NAME" jdbcType="VARCHAR" property="senderName" />
+    <result column="DISCOUNT_RATE" jdbcType="DECIMAL" property="discountRate" />
+    <result column="DISCOUNT_FEE" jdbcType="DECIMAL" property="discountFee" />
+    <result column="IS_DONE" jdbcType="VARCHAR" property="isDone" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    TRADE_ID, TRADE_PARENT_ID, ITEM_ID, ITEM_NUM, ITEM_TITLE, TK_CREATE_TIME, TB_PAID_TIME, 
+    TOTAL_COMMISSION_RATE, ALIPAY_TOTAL_PRICE, SUBSIDY_RATE, TK_TOTAL_RATE, PUB_SHARE_PRE_FEE, 
+    ALIMAMA_RATE, TK_STATUS, ITEM_PRICE, SENDER_ID, SENDER_NAME, DISCOUNT_RATE, DISCOUNT_FEE, 
+    IS_DONE
+  </sql>
+  <!-- 该注释以下的内容不会被覆盖，请不要删除或修改此条注释内容-->
+</mapper>

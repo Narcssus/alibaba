@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.narc.alibaba.service.alimama.dao.mapper.AlitPublisherOrderMapper">
+  <resultMap id="BaseResultMap" type="com.narc.alibaba.service.alimama.entity.AlitPublisherOrder">
+    <id column="TRADE_ID" jdbcType="VARCHAR" property="tradeId" />
+    <result column="TRADE_PARENT_ID" jdbcType="VARCHAR" property="tradeParentId" />
+    <result column="ITEM_ID" jdbcType="VARCHAR" property="itemId" />
+    <result column="ITEM_NUM" jdbcType="INTEGER" property="itemNum" />
+    <result column="ITEM_TITLE" jdbcType="VARCHAR" property="itemTitle" />
+    <result column="TK_CREATE_TIME" jdbcType="TIMESTAMP" property="tkCreateTime" />
+    <result column="TB_PAID_TIME" jdbcType="TIMESTAMP" property="tbPaidTime" />
+    <result column="TOTAL_COMMISSION_RATE" jdbcType="DECIMAL" property="totalCommissionRate" />
+    <result column="ALIPAY_TOTAL_PRICE" jdbcType="DECIMAL" property="alipayTotalPrice" />
+    <result column="SUBSIDY_RATE" jdbcType="VARCHAR" property="subsidyRate" />
+    <result column="TK_TOTAL_RATE" jdbcType="VARCHAR" property="tkTotalRate" />
+    <result column="PUB_SHARE_PRE_FEE" jdbcType="DECIMAL" property="pubSharePreFee" />
+    <result column="ALIMAMA_RATE" jdbcType="DECIMAL" property="alimamaRate" />
+    <result column="TK_STATUS" jdbcType="VARCHAR" property="tkStatus" />
+    <result column="ITEM_PRICE" jdbcType="DECIMAL" property="itemPrice" />
+    <result column="SENDER_ID" jdbcType="VARCHAR" property="senderId" />
+    <result column="SENDER_NAME" jdbcType="VARCHAR" property="senderName" />
+    <result column="DISCOUNT_RATE" jdbcType="DECIMAL" property="discountRate" />
+    <result column="DISCOUNT_FEE" jdbcType="DECIMAL" property="discountFee" />
+    <result column="IS_DONE" jdbcType="VARCHAR" property="isDone" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    TRADE_ID, TRADE_PARENT_ID, ITEM_ID, ITEM_NUM, ITEM_TITLE, TK_CREATE_TIME, TB_PAID_TIME, 
+    TOTAL_COMMISSION_RATE, ALIPAY_TOTAL_PRICE, SUBSIDY_RATE, TK_TOTAL_RATE, PUB_SHARE_PRE_FEE, 
+    ALIMAMA_RATE, TK_STATUS, ITEM_PRICE, SENDER_ID, SENDER_NAME, DISCOUNT_RATE, DISCOUNT_FEE, 
+    IS_DONE
+  </sql>
+  <select id="selectByExample" parameterType="com.narc.alibaba.service.alimama.entity.AlitPublisherOrderExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from ALIT_PUBLISHER_ORDER
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from ALIT_PUBLISHER_ORDER
+    where TRADE_ID = #{tradeId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from ALIT_PUBLISHER_ORDER
+    where TRADE_ID = #{tradeId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.narc.alibaba.service.alimama.entity.AlitPublisherOrderExample">
+    delete from ALIT_PUBLISHER_ORDER
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.narc.alibaba.service.alimama.entity.AlitPublisherOrder">
+    insert into ALIT_PUBLISHER_ORDER (TRADE_ID, TRADE_PARENT_ID, ITEM_ID, 
+      ITEM_NUM, ITEM_TITLE, TK_CREATE_TIME, 
+      TB_PAID_TIME, TOTAL_COMMISSION_RATE, ALIPAY_TOTAL_PRICE, 
+      SUBSIDY_RATE, TK_TOTAL_RATE, PUB_SHARE_PRE_FEE, 
+      ALIMAMA_RATE, TK_STATUS, ITEM_PRICE, 
+      SENDER_ID, SENDER_NAME, DISCOUNT_RATE, 
+      DISCOUNT_FEE, IS_DONE)
+    values (#{tradeId,jdbcType=VARCHAR}, #{tradeParentId,jdbcType=VARCHAR}, #{itemId,jdbcType=VARCHAR}, 
+      #{itemNum,jdbcType=INTEGER}, #{itemTitle,jdbcType=VARCHAR}, #{tkCreateTime,jdbcType=TIMESTAMP}, 
+      #{tbPaidTime,jdbcType=TIMESTAMP}, #{totalCommissionRate,jdbcType=DECIMAL}, #{alipayTotalPrice,jdbcType=DECIMAL}, 
+      #{subsidyRate,jdbcType=VARCHAR}, #{tkTotalRate,jdbcType=VARCHAR}, #{pubSharePreFee,jdbcType=DECIMAL}, 
+      #{alimamaRate,jdbcType=DECIMAL}, #{tkStatus,jdbcType=VARCHAR}, #{itemPrice,jdbcType=DECIMAL}, 
+      #{senderId,jdbcType=VARCHAR}, #{senderName,jdbcType=VARCHAR}, #{discountRate,jdbcType=DECIMAL}, 
+      #{discountFee,jdbcType=DECIMAL}, #{isDone,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.narc.alibaba.service.alimama.entity.AlitPublisherOrder">
+    insert into ALIT_PUBLISHER_ORDER
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="tradeId != null">
+        TRADE_ID,
+      </if>
+      <if test="tradeParentId != null">
+        TRADE_PARENT_ID,
+      </if>
+      <if test="itemId != null">
+        ITEM_ID,
+      </if>
+      <if test="itemNum != null">
+        ITEM_NUM,
+      </if>
+      <if test="itemTitle != null">
+        ITEM_TITLE,
+      </if>
+      <if test="tkCreateTime != null">
+        TK_CREATE_TIME,
+      </if>
+      <if test="tbPaidTime != null">
+        TB_PAID_TIME,
+      </if>
+      <if test="totalCommissionRate != null">
+        TOTAL_COMMISSION_RATE,
+      </if>
+      <if test="alipayTotalPrice != null">
+        ALIPAY_TOTAL_PRICE,
+      </if>
+      <if test="subsidyRate != null">
+        SUBSIDY_RATE,
+      </if>
+      <if test="tkTotalRate != null">
+        TK_TOTAL_RATE,
+      </if>
+      <if test="pubSharePreFee != null">
+        PUB_SHARE_PRE_FEE,
+      </if>
+      <if test="alimamaRate != null">
+        ALIMAMA_RATE,
+      </if>
+      <if test="tkStatus != null">
+        TK_STATUS,
+      </if>
+      <if test="itemPrice != null">
+        ITEM_PRICE,
+      </if>
+      <if test="senderId != null">
+        SENDER_ID,
+      </if>
+      <if test="senderName != null">
+        SENDER_NAME,
+      </if>
+      <if test="discountRate != null">
+        DISCOUNT_RATE,
+      </if>
+      <if test="discountFee != null">
+        DISCOUNT_FEE,
+      </if>
+      <if test="isDone != null">
+        IS_DONE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="tradeId != null">
+        #{tradeId,jdbcType=VARCHAR},
+      </if>
+      <if test="tradeParentId != null">
+        #{tradeParentId,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null">
+        #{itemId,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNum != null">
+        #{itemNum,jdbcType=INTEGER},
+      </if>
+      <if test="itemTitle != null">
+        #{itemTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="tkCreateTime != null">
+        #{tkCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tbPaidTime != null">
+        #{tbPaidTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="totalCommissionRate != null">
+        #{totalCommissionRate,jdbcType=DECIMAL},
+      </if>
+      <if test="alipayTotalPrice != null">
+        #{alipayTotalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="subsidyRate != null">
+        #{subsidyRate,jdbcType=VARCHAR},
+      </if>
+      <if test="tkTotalRate != null">
+        #{tkTotalRate,jdbcType=VARCHAR},
+      </if>
+      <if test="pubSharePreFee != null">
+        #{pubSharePreFee,jdbcType=DECIMAL},
+      </if>
+      <if test="alimamaRate != null">
+        #{alimamaRate,jdbcType=DECIMAL},
+      </if>
+      <if test="tkStatus != null">
+        #{tkStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="itemPrice != null">
+        #{itemPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="senderId != null">
+        #{senderId,jdbcType=VARCHAR},
+      </if>
+      <if test="senderName != null">
+        #{senderName,jdbcType=VARCHAR},
+      </if>
+      <if test="discountRate != null">
+        #{discountRate,jdbcType=DECIMAL},
+      </if>
+      <if test="discountFee != null">
+        #{discountFee,jdbcType=DECIMAL},
+      </if>
+      <if test="isDone != null">
+        #{isDone,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.narc.alibaba.service.alimama.entity.AlitPublisherOrderExample" resultType="java.lang.Long">
+    select count(*) from ALIT_PUBLISHER_ORDER
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update ALIT_PUBLISHER_ORDER
+    <set>
+      <if test="record.tradeId != null">
+        TRADE_ID = #{record.tradeId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tradeParentId != null">
+        TRADE_PARENT_ID = #{record.tradeParentId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.itemId != null">
+        ITEM_ID = #{record.itemId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.itemNum != null">
+        ITEM_NUM = #{record.itemNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.itemTitle != null">
+        ITEM_TITLE = #{record.itemTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tkCreateTime != null">
+        TK_CREATE_TIME = #{record.tkCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.tbPaidTime != null">
+        TB_PAID_TIME = #{record.tbPaidTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.totalCommissionRate != null">
+        TOTAL_COMMISSION_RATE = #{record.totalCommissionRate,jdbcType=DECIMAL},
+      </if>
+      <if test="record.alipayTotalPrice != null">
+        ALIPAY_TOTAL_PRICE = #{record.alipayTotalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.subsidyRate != null">
+        SUBSIDY_RATE = #{record.subsidyRate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tkTotalRate != null">
+        TK_TOTAL_RATE = #{record.tkTotalRate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pubSharePreFee != null">
+        PUB_SHARE_PRE_FEE = #{record.pubSharePreFee,jdbcType=DECIMAL},
+      </if>
+      <if test="record.alimamaRate != null">
+        ALIMAMA_RATE = #{record.alimamaRate,jdbcType=DECIMAL},
+      </if>
+      <if test="record.tkStatus != null">
+        TK_STATUS = #{record.tkStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="record.itemPrice != null">
+        ITEM_PRICE = #{record.itemPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="record.senderId != null">
+        SENDER_ID = #{record.senderId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.senderName != null">
+        SENDER_NAME = #{record.senderName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.discountRate != null">
+        DISCOUNT_RATE = #{record.discountRate,jdbcType=DECIMAL},
+      </if>
+      <if test="record.discountFee != null">
+        DISCOUNT_FEE = #{record.discountFee,jdbcType=DECIMAL},
+      </if>
+      <if test="record.isDone != null">
+        IS_DONE = #{record.isDone,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update ALIT_PUBLISHER_ORDER
+    set TRADE_ID = #{record.tradeId,jdbcType=VARCHAR},
+      TRADE_PARENT_ID = #{record.tradeParentId,jdbcType=VARCHAR},
+      ITEM_ID = #{record.itemId,jdbcType=VARCHAR},
+      ITEM_NUM = #{record.itemNum,jdbcType=INTEGER},
+      ITEM_TITLE = #{record.itemTitle,jdbcType=VARCHAR},
+      TK_CREATE_TIME = #{record.tkCreateTime,jdbcType=TIMESTAMP},
+      TB_PAID_TIME = #{record.tbPaidTime,jdbcType=TIMESTAMP},
+      TOTAL_COMMISSION_RATE = #{record.totalCommissionRate,jdbcType=DECIMAL},
+      ALIPAY_TOTAL_PRICE = #{record.alipayTotalPrice,jdbcType=DECIMAL},
+      SUBSIDY_RATE = #{record.subsidyRate,jdbcType=VARCHAR},
+      TK_TOTAL_RATE = #{record.tkTotalRate,jdbcType=VARCHAR},
+      PUB_SHARE_PRE_FEE = #{record.pubSharePreFee,jdbcType=DECIMAL},
+      ALIMAMA_RATE = #{record.alimamaRate,jdbcType=DECIMAL},
+      TK_STATUS = #{record.tkStatus,jdbcType=VARCHAR},
+      ITEM_PRICE = #{record.itemPrice,jdbcType=DECIMAL},
+      SENDER_ID = #{record.senderId,jdbcType=VARCHAR},
+      SENDER_NAME = #{record.senderName,jdbcType=VARCHAR},
+      DISCOUNT_RATE = #{record.discountRate,jdbcType=DECIMAL},
+      DISCOUNT_FEE = #{record.discountFee,jdbcType=DECIMAL},
+      IS_DONE = #{record.isDone,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.narc.alibaba.service.alimama.entity.AlitPublisherOrder">
+    update ALIT_PUBLISHER_ORDER
+    <set>
+      <if test="tradeParentId != null">
+        TRADE_PARENT_ID = #{tradeParentId,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null">
+        ITEM_ID = #{itemId,jdbcType=VARCHAR},
+      </if>
+      <if test="itemNum != null">
+        ITEM_NUM = #{itemNum,jdbcType=INTEGER},
+      </if>
+      <if test="itemTitle != null">
+        ITEM_TITLE = #{itemTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="tkCreateTime != null">
+        TK_CREATE_TIME = #{tkCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tbPaidTime != null">
+        TB_PAID_TIME = #{tbPaidTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="totalCommissionRate != null">
+        TOTAL_COMMISSION_RATE = #{totalCommissionRate,jdbcType=DECIMAL},
+      </if>
+      <if test="alipayTotalPrice != null">
+        ALIPAY_TOTAL_PRICE = #{alipayTotalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="subsidyRate != null">
+        SUBSIDY_RATE = #{subsidyRate,jdbcType=VARCHAR},
+      </if>
+      <if test="tkTotalRate != null">
+        TK_TOTAL_RATE = #{tkTotalRate,jdbcType=VARCHAR},
+      </if>
+      <if test="pubSharePreFee != null">
+        PUB_SHARE_PRE_FEE = #{pubSharePreFee,jdbcType=DECIMAL},
+      </if>
+      <if test="alimamaRate != null">
+        ALIMAMA_RATE = #{alimamaRate,jdbcType=DECIMAL},
+      </if>
+      <if test="tkStatus != null">
+        TK_STATUS = #{tkStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="itemPrice != null">
+        ITEM_PRICE = #{itemPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="senderId != null">
+        SENDER_ID = #{senderId,jdbcType=VARCHAR},
+      </if>
+      <if test="senderName != null">
+        SENDER_NAME = #{senderName,jdbcType=VARCHAR},
+      </if>
+      <if test="discountRate != null">
+        DISCOUNT_RATE = #{discountRate,jdbcType=DECIMAL},
+      </if>
+      <if test="discountFee != null">
+        DISCOUNT_FEE = #{discountFee,jdbcType=DECIMAL},
+      </if>
+      <if test="isDone != null">
+        IS_DONE = #{isDone,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where TRADE_ID = #{tradeId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.narc.alibaba.service.alimama.entity.AlitPublisherOrder">
+    update ALIT_PUBLISHER_ORDER
+    set TRADE_PARENT_ID = #{tradeParentId,jdbcType=VARCHAR},
+      ITEM_ID = #{itemId,jdbcType=VARCHAR},
+      ITEM_NUM = #{itemNum,jdbcType=INTEGER},
+      ITEM_TITLE = #{itemTitle,jdbcType=VARCHAR},
+      TK_CREATE_TIME = #{tkCreateTime,jdbcType=TIMESTAMP},
+      TB_PAID_TIME = #{tbPaidTime,jdbcType=TIMESTAMP},
+      TOTAL_COMMISSION_RATE = #{totalCommissionRate,jdbcType=DECIMAL},
+      ALIPAY_TOTAL_PRICE = #{alipayTotalPrice,jdbcType=DECIMAL},
+      SUBSIDY_RATE = #{subsidyRate,jdbcType=VARCHAR},
+      TK_TOTAL_RATE = #{tkTotalRate,jdbcType=VARCHAR},
+      PUB_SHARE_PRE_FEE = #{pubSharePreFee,jdbcType=DECIMAL},
+      ALIMAMA_RATE = #{alimamaRate,jdbcType=DECIMAL},
+      TK_STATUS = #{tkStatus,jdbcType=VARCHAR},
+      ITEM_PRICE = #{itemPrice,jdbcType=DECIMAL},
+      SENDER_ID = #{senderId,jdbcType=VARCHAR},
+      SENDER_NAME = #{senderName,jdbcType=VARCHAR},
+      DISCOUNT_RATE = #{discountRate,jdbcType=DECIMAL},
+      DISCOUNT_FEE = #{discountFee,jdbcType=DECIMAL},
+      IS_DONE = #{isDone,jdbcType=VARCHAR}
+    where TRADE_ID = #{tradeId,jdbcType=VARCHAR}
+  </update>
+  <sql id="Batch_Insert_Column_List">
+    #{item.tradeId}, #{item.tradeParentId}, #{item.itemId}, #{item.itemNum}, #{item.itemTitle}, 
+    #{item.tkCreateTime}, #{item.tbPaidTime}, #{item.totalCommissionRate}, #{item.alipayTotalPrice}, 
+    #{item.subsidyRate}, #{item.tkTotalRate}, #{item.pubSharePreFee}, #{item.alimamaRate}, 
+    #{item.tkStatus}, #{item.itemPrice}, #{item.senderId}, #{item.senderName}, #{item.discountRate}, 
+    #{item.discountFee}, #{item.isDone}
+  </sql>
+  <insert id="insertBatch" parameterType="java.util.List">
+    insert into ALIT_PUBLISHER_ORDER(
+    <include refid="Base_Column_List" />
+    ) values
+    <foreach collection="list" index="index" item="item" separator=",">
+      (
+      <include refid="Batch_Insert_Column_List" />
+      )
+    </foreach>
+  </insert>
+</mapper>

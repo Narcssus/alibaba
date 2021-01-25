@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.narc.alibaba.service.alimama.dao.mapper.AlitMessageLogMapperExtend">
+  <!--
+  该文件是由NarcMybatisGenerator自动生成的文件
+  建议将所有自定义的SQL保存在该文件中
+  请注意不要删除此文件的注释内容
+  -->
+  <resultMap id="BaseResultMap" type="com.narc.alibaba.service.alimama.entity.AlitMessageLog">
+    <id column="ID" jdbcType="INTEGER" property="id" />
+    <result column="SENDER_ID" jdbcType="VARCHAR" property="senderId" />
+    <result column="SENDER_NAME" jdbcType="VARCHAR" property="senderName" />
+    <result column="MSG_CONTENT" jdbcType="VARCHAR" property="msgContent" />
+    <result column="RET_MSG" jdbcType="VARCHAR" property="retMsg" />
+    <result column="ITEM_ID" jdbcType="VARCHAR" property="itemId" />
+    <result column="CREATED_DATETIME" jdbcType="TIMESTAMP" property="createdDatetime" />
+    <result column="CREATED_ID" jdbcType="VARCHAR" property="createdId" />
+    <result column="MODIFIED_DATETIME" jdbcType="TIMESTAMP" property="modifiedDatetime" />
+    <result column="MODIFIED_ID" jdbcType="VARCHAR" property="modifiedId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, SENDER_ID, SENDER_NAME, MSG_CONTENT, RET_MSG, ITEM_ID, CREATED_DATETIME, CREATED_ID, 
+    MODIFIED_DATETIME, MODIFIED_ID
+  </sql>
+  <!-- 该注释以下的内容不会被覆盖，请不要删除或修改此条注释内容-->
+</mapper>
