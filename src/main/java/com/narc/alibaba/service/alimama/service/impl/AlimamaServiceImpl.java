@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.narc.alibaba.service.alimama.dao.service.AlitConfigDaoService;
+import com.narc.alibaba.service.alimama.dao.service.AlitMessageLogDaoService;
 import com.narc.alibaba.service.alimama.dao.service.AlitPublisherOrderDaoService;
+import com.narc.alibaba.service.alimama.entity.AlitMessageLog;
 import com.narc.alibaba.service.alimama.entity.AlitPublisherOrder;
 import com.narc.alibaba.service.alimama.service.AlimamaService;
 import com.narc.alibaba.utils.DateUtils;
@@ -59,13 +61,21 @@ public class AlimamaServiceImpl implements AlimamaService {
     private AlitConfigDaoService alitConfigDaoService;
     @Autowired
     private AlitPublisherOrderDaoService alitPublisherOrderDaoService;
+    @Autowired
+    private AlitMessageLogDaoService alitMessageLogDaoService;
 
 
     @Override
     public JSONObject tranShareWord(JSONObject paramObject) {
         String originalWord = paramObject.getString("originalWord");
         String type = paramObject.getString("type");
-        String res = tranShareWord(originalWord, type);
+        AlitMessageLog alitMessageLog = new AlitMessageLog();
+        alitMessageLog.setSenderId(paramObject.getString("senderId"));
+        alitMessageLog.setSenderName(paramObject.getString("senderName"));
+        alitMessageLog.setMsgContent(originalWord);
+        String res = tranShareWord(originalWord, type, alitMessageLog);
+        alitMessageLog.setRetMsg(res);
+        alitMessageLogDaoService.insertSelective(alitMessageLog);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("tranShareWord", res);
         return jsonObject;
@@ -223,13 +233,15 @@ public class AlimamaServiceImpl implements AlimamaService {
         return null;
     }
 
-    private String tranShareWord(String originalWord, String type) {
+    private String tranShareWord(String originalWord, String type, AlitMessageLog alitMessageLog) {
         try {
             TaobaoClient client = new DefaultTaobaoClient(apiUrl, appKey, appSecret);
             TbkDgMaterialOptionalResponse.MapData mapData = getItem(originalWord);
             if (mapData == null) {
                 return "该商品不在优惠库中或输入淘口令错误";
             }
+            log.debug("查询商品详情返回报文：{}", JSON.toJSONString(mapData));
+            alitMessageLog.setItemId("" + mapData.getItemId());
             String itemUrl = mapData.getCouponShareUrl();
             if (StringUtils.isEmpty(itemUrl)) {
                 itemUrl = mapData.getUrl();
@@ -237,7 +249,7 @@ public class AlimamaServiceImpl implements AlimamaService {
             itemUrl = "https:" + itemUrl;
             log.info("itemUrl=" + itemUrl);
 
-            String tickets = "";
+            String tickets = "无优惠券";
             //查询有无优惠券
             try {
                 TbkCouponGetRequest req = new TbkCouponGetRequest();
@@ -245,11 +257,12 @@ public class AlimamaServiceImpl implements AlimamaService {
                 req.setActivityId(mapData.getCouponId());
                 TbkCouponGetResponse rsp = client.execute(req);
                 TbkCouponGetResponse.MapData data = rsp.getData();
-                if (data.getCouponRemainCount() > 0) {
+                if (data != null && data.getCouponRemainCount() > 0) {
                     tickets = data.getCouponAmount() + "元";
                 }
             } catch (Exception e) {
                 log.error("查询优惠券失败", e);
+                tickets = "";
             }
 
             TbkTpwdCreateRequest req2 = new TbkTpwdCreateRequest();
@@ -257,6 +270,7 @@ public class AlimamaServiceImpl implements AlimamaService {
             req2.setUrl(itemUrl);
             TbkTpwdCreateResponse response2 = client.execute(req2);
             TbkTpwdCreateResponse.MapData res2 = response2.getData();
+
             String model = res2.getModel();
             StringBuilder sb = new StringBuilder();
             sb.append(model).append("\r\n");
@@ -265,15 +279,21 @@ public class AlimamaServiceImpl implements AlimamaService {
                     BigDecimal rate = new BigDecimal(mapData.getCommissionRate());
                     rate = rate.multiply(new BigDecimal(0.9));
                     rate = rate.divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN);
-                    BigDecimal price = new BigDecimal(mapData.getSalePrice());
+                    BigDecimal price = new BigDecimal(mapData.getReservePrice());
+                    if (mapData.getSalePrice() != null) {
+                        price = new BigDecimal(mapData.getSalePrice());
+                    }
                     rate = doDiscountStrategy(rate, price, type);
-                    BigDecimal discount = price.multiply(rate);
+                    BigDecimal discount = price.multiply(rate)
+                            .divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN);
                     sb.append("==================").append("\r\n");
-                    sb.append("返现率为").append(rate.toPlainString()).append("%").append("\r\n");
+                    sb.append("返现率为").append(rate.setScale(2, BigDecimal.ROUND_HALF_DOWN)
+                            .toPlainString()).append("%").append("\r\n");
 
                     sb.append("==================").append("\r\n");
                     sb.append("支付").append(price.toPlainString()).append("元，");
-                    sb.append("预计返现为").append(discount.toPlainString()).append("元").append("\r\n");
+                    sb.append("预计返现为").append(discount.setScale(2, BigDecimal.ROUND_HALF_DOWN)
+                            .toPlainString()).append("元").append("\r\n");
                 }
                 if (StringUtils.isNotBlank(tickets)) {
                     sb.append("==================").append("\r\n");

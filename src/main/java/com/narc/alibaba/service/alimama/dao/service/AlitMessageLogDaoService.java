@@ -18,4 +18,8 @@ public class AlitMessageLogDaoService {
 
     @Resource
     private AlitMessageLogMapperExtend alitMessageLogMapperExtend;
+
+    public void insertSelective(AlitMessageLog alitMessageLog){
+        alitMessageLogMapper.insertSelective(alitMessageLog);
+    }
 }
