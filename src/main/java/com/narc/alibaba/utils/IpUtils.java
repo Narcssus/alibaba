@@ -2,10 +2,12 @@ package com.narc.alibaba.utils;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.net.Inet6Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.*;
 import java.util.Enumeration;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author : Narcssus
@@ -13,42 +15,44 @@ import java.util.Enumeration;
  */
 @Slf4j
 public class IpUtils {
-    /**
-     * 单网卡名称
-     */
-    private static final String NETWORK_CARD = "eth0";
 
-    /**
-     * 绑定网卡名称
-     */
-    private static final String NETWORK_CARD_BAND = "bond0";
 
-    /**
-     * Description: linux下获得本机IPv4 IP<br>
-     */
-    public static String getLocalIP() {
+    private static Pattern pattern = Pattern.compile("\\<dd class\\=\"fz24\">(.*?)\\<\\/dd>");
+
+
+    public static String getOutIPV4() {
         String ip = "";
+        String chinaz = "http://ip.chinaz.com";
+
+        StringBuilder inputLine = new StringBuilder();
+        String read = "";
+        URL url = null;
+        HttpURLConnection urlConnection = null;
+        BufferedReader in = null;
         try {
-            Enumeration<NetworkInterface> e1 = NetworkInterface.getNetworkInterfaces();
-            while (e1.hasMoreElements()) {
-                NetworkInterface ni = e1.nextElement();
-                //单网卡或者绑定双网卡
-                if ((NETWORK_CARD.equals(ni.getName()))
-                        || (NETWORK_CARD_BAND.equals(ni.getName()))) {
-                    Enumeration<InetAddress> e2 = ni.getInetAddresses();
-                    while (e2.hasMoreElements()) {
-                        InetAddress ia = e2.nextElement();
-                        if (ia instanceof Inet6Address) {
-                            continue;
-                        }
-                        ip = ia.getHostAddress();
-                    }
-                    break;
-                }
+            url = new URL(chinaz);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(),
+                    "UTF-8"));
+            while ((read = in.readLine()) != null) {
+                inputLine.append(read).append("\r\n");
             }
         } catch (Exception e) {
-            log.error("获取本机IP异常", e);
+            log.error("获取IP失败",e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (Exception e) {
+                    log.error("获取IP失败",e);
+                }
+            }
+        }
+        Matcher m = pattern.matcher(inputLine.toString());
+        if (m.find()) {
+            ip = m.group(1);
         }
         return ip;
     }
+
 }

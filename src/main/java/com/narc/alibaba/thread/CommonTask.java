@@ -29,7 +29,7 @@ public class CommonTask {
                 return ;
             }
             Date now = new Date();
-            String ip = IpUtils.getLocalIP();
+            String ip = IpUtils.getOutIPV4();
             if (!ip.equals(competitionInfo.getNowIp()) &&
                     now.compareTo(DateUtils.addMinutes(competitionInfo.getLastRunTime(), intervalTime)) > 0) {
                 //竞争锁
