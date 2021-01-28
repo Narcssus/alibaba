@@ -32,6 +32,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Narcssus
@@ -113,7 +114,87 @@ public class AlimamaServiceImpl implements AlimamaService {
         }
     }
 
-    private static JSONArray getPaidOrder(String uid, String start_time, String end_time) {
+    @Override
+    public void dealOrders() {
+        List<AlitPublisherOrder> orders = alitPublisherOrderDaoService.getAllNewOrders();
+        log.debug("处理订单,新订单{}个", orders.size());
+        for (AlitPublisherOrder order : orders) {
+            String itemId = order.getItemId();
+            Date paidTime = order.getTbPaidTime();
+            List<AlitMessageLog> logs = alitMessageLogDaoService.getLogs(itemId, paidTime);
+            if (CollectionUtils.isEmpty(logs)) {
+                log.info("订单{}，商品{},非公众号用户，请手动匹配", order.getTradeParentId(), itemId);
+                continue;
+            }
+            List<String> senders = logs.stream().map(AlitMessageLog::getSenderId).distinct()
+                    .collect(Collectors.toList());
+            if (senders.size() > 1) {
+                log.info("订单{}，商品{},用户无法匹配，请手动匹配", order.getTradeParentId(), itemId);
+                continue;
+            }
+            AlitMessageLog alitMessageLog = logs.get(0);
+            BigDecimal discountRate = alitMessageLog.getDiscountRate();
+            if (discountRate == null) {
+                discountRate = new BigDecimal(0);
+            }
+            BigDecimal price = order.getAlipayTotalPrice();
+            BigDecimal discount = price.multiply(discountRate).divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN);
+            AlitPublisherOrder update = new AlitPublisherOrder();
+            update.setTradeId(order.getTradeId());
+            update.setSenderId(alitMessageLog.getSenderId());
+            update.setSenderName(alitMessageLog.getSenderName());
+            update.setDiscountRate(discountRate);
+            update.setDiscountRate(discount);
+            alitPublisherOrderDaoService.updateByPrimaryKeySelective(update);
+        }
+
+    }
+
+    @Override
+    public void dealUnfinshOrders() {
+        List<AlitPublisherOrder> orders = alitPublisherOrderDaoService.getAllUnFinishedOrders();
+        log.debug("处理未完成订单,未完成订单{}个", orders.size());
+        for (AlitPublisherOrder order : orders) {
+            try {
+                //休眠5秒
+                Thread.sleep(5 * 1000);
+            } catch (Exception e) {
+            }
+            AlitPublisherOrder update = getOrderStatusByOrderId(order.getTradeId(),
+                    order.getTbPaidTime(), order.getTkStatus());
+            if (update != null) {
+                alitPublisherOrderDaoService.updateByPrimaryKeySelective(update);
+            }
+        }
+    }
+
+    private AlitPublisherOrder getOrderStatusByOrderId(String tradeId, Date time, String tKStatus) {
+        String uid = alitConfigDaoService.getValueByKey("taobao_user_id");
+        String start_time = DateUtils.convertDateToStr(DateUtils.addMinutes(time, -1), DateUtils.FORMAT_19);
+        String end_time = DateUtils.convertDateToStr(DateUtils.addMinutes(time, 1), DateUtils.FORMAT_19);
+        JSONArray jsonArray = getPaidOrder(uid, start_time, end_time);
+        if (CollectionUtils.isEmpty(jsonArray)) {
+            log.error("没有找到对应的订单{},付款时间{}", tradeId, DateUtils.convertDateToStr(time, DateUtils.FORMAT_19));
+            return null;
+        }
+        for (int i = 0; i < jsonArray.size(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            if (tradeId.equals(jsonObject.getString("trade_id"))) {
+                if (tKStatus.equals(jsonObject.getString("tk_status"))) {
+                    log.debug("订单{},付款时间{},状态未改变", tradeId, DateUtils.convertDateToStr(time, DateUtils.FORMAT_19));
+                    return null;
+                }
+                AlitPublisherOrder order = new AlitPublisherOrder();
+                order.setTradeId(tradeId);
+                order.setTkStatus(jsonObject.getString("tk_status"));
+                return order;
+            }
+        }
+        log.error("没有找到对应的订单{},付款时间{}", tradeId, DateUtils.convertDateToStr(time, DateUtils.FORMAT_19));
+        return null;
+    }
+
+    private JSONArray getPaidOrder(String uid, String start_time, String end_time) {
         JSONArray resArray = new JSONArray();
         try {
             String url = "https://api.taokouling.com/tbk/TbkScOrderDetailsGet";

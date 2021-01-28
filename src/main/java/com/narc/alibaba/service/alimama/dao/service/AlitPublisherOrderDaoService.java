@@ -6,7 +6,10 @@ import com.narc.alibaba.service.alimama.entity.AlitPublisherOrder;
 
 import javax.annotation.Resource;
 
+import com.narc.alibaba.service.alimama.entity.AlitPublisherOrderExample;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * DaoService
@@ -33,4 +36,18 @@ public class AlitPublisherOrderDaoService {
     public void insertOne(AlitPublisherOrder order) {
         alitPublisherOrderMapper.insertSelective(order);
     }
+
+    public List<AlitPublisherOrder> getAllNewOrders() {
+        AlitPublisherOrderExample example = new AlitPublisherOrderExample();
+        example.createCriteria().andSenderIdIsNull();
+        return alitPublisherOrderMapper.selectByExample(example);
+    }
+
+    public List<AlitPublisherOrder> getAllUnFinishedOrders() {
+        AlitPublisherOrderExample example = new AlitPublisherOrderExample();
+        example.createCriteria().andTkStatusEqualTo("12");
+        return alitPublisherOrderMapper.selectByExample(example);
+    }
+
+
 }

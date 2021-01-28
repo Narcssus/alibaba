@@ -18,4 +18,8 @@ public interface AlimamaService {
     JSONObject tranShareWord(JSONObject paramObject);
 
     void getOrders(Date startTime,Date endTime);
+
+    void dealOrders();
+
+    void dealUnfinshOrders();
 }
