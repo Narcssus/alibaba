@@ -1,5 +1,6 @@
 package com.narc.alibaba.service.alimama.entity;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -512,6 +513,66 @@ public class AlitMessageLogExample {
 
         public Criteria andItemIdNotBetween(String value1, String value2) {
             addCriterion("ITEM_ID not between", value1, value2, "itemId");
+            return (Criteria) this;
+        }
+
+        public Criteria andDiscountRateIsNull() {
+            addCriterion("DISCOUNT_RATE is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDiscountRateIsNotNull() {
+            addCriterion("DISCOUNT_RATE is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDiscountRateEqualTo(BigDecimal value) {
+            addCriterion("DISCOUNT_RATE =", value, "discountRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andDiscountRateNotEqualTo(BigDecimal value) {
+            addCriterion("DISCOUNT_RATE <>", value, "discountRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andDiscountRateGreaterThan(BigDecimal value) {
+            addCriterion("DISCOUNT_RATE >", value, "discountRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andDiscountRateGreaterThanOrEqualTo(BigDecimal value) {
+            addCriterion("DISCOUNT_RATE >=", value, "discountRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andDiscountRateLessThan(BigDecimal value) {
+            addCriterion("DISCOUNT_RATE <", value, "discountRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andDiscountRateLessThanOrEqualTo(BigDecimal value) {
+            addCriterion("DISCOUNT_RATE <=", value, "discountRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andDiscountRateIn(List<BigDecimal> values) {
+            addCriterion("DISCOUNT_RATE in", values, "discountRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andDiscountRateNotIn(List<BigDecimal> values) {
+            addCriterion("DISCOUNT_RATE not in", values, "discountRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andDiscountRateBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("DISCOUNT_RATE between", value1, value2, "discountRate");
+            return (Criteria) this;
+        }
+
+        public Criteria andDiscountRateNotBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("DISCOUNT_RATE not between", value1, value2, "discountRate");
             return (Criteria) this;
         }
 

@@ -8,6 +8,7 @@
     <result column="MSG_CONTENT" jdbcType="VARCHAR" property="msgContent" />
     <result column="RET_MSG" jdbcType="VARCHAR" property="retMsg" />
     <result column="ITEM_ID" jdbcType="VARCHAR" property="itemId" />
+    <result column="DISCOUNT_RATE" jdbcType="DECIMAL" property="discountRate" />
     <result column="CREATED_DATETIME" jdbcType="TIMESTAMP" property="createdDatetime" />
     <result column="CREATED_ID" jdbcType="VARCHAR" property="createdId" />
     <result column="MODIFIED_DATETIME" jdbcType="TIMESTAMP" property="modifiedDatetime" />
@@ -72,8 +73,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    ID, SENDER_ID, SENDER_NAME, MSG_CONTENT, RET_MSG, ITEM_ID, CREATED_DATETIME, CREATED_ID, 
-    MODIFIED_DATETIME, MODIFIED_ID
+    ID, SENDER_ID, SENDER_NAME, MSG_CONTENT, RET_MSG, ITEM_ID, DISCOUNT_RATE, CREATED_DATETIME, 
+    CREATED_ID, MODIFIED_DATETIME, MODIFIED_ID
   </sql>
   <select id="selectByExample" parameterType="com.narc.alibaba.service.alimama.entity.AlitMessageLogExample" resultMap="BaseResultMap">
     select
@@ -108,12 +109,12 @@
   <insert id="insert" parameterType="com.narc.alibaba.service.alimama.entity.AlitMessageLog">
     insert into ALIT_MESSAGE_LOG (ID, SENDER_ID, SENDER_NAME, 
       MSG_CONTENT, RET_MSG, ITEM_ID, 
-      CREATED_DATETIME, CREATED_ID, MODIFIED_DATETIME, 
-      MODIFIED_ID)
+      DISCOUNT_RATE, CREATED_DATETIME, CREATED_ID, 
+      MODIFIED_DATETIME, MODIFIED_ID)
     values (#{id,jdbcType=INTEGER}, #{senderId,jdbcType=VARCHAR}, #{senderName,jdbcType=VARCHAR}, 
       #{msgContent,jdbcType=VARCHAR}, #{retMsg,jdbcType=VARCHAR}, #{itemId,jdbcType=VARCHAR}, 
-      #{createdDatetime,jdbcType=TIMESTAMP}, #{createdId,jdbcType=VARCHAR}, #{modifiedDatetime,jdbcType=TIMESTAMP}, 
-      #{modifiedId,jdbcType=VARCHAR})
+      #{discountRate,jdbcType=DECIMAL}, #{createdDatetime,jdbcType=TIMESTAMP}, #{createdId,jdbcType=VARCHAR}, 
+      #{modifiedDatetime,jdbcType=TIMESTAMP}, #{modifiedId,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.narc.alibaba.service.alimama.entity.AlitMessageLog">
     insert into ALIT_MESSAGE_LOG
@@ -135,6 +136,9 @@
       </if>
       <if test="itemId != null">
         ITEM_ID,
+      </if>
+      <if test="discountRate != null">
+        DISCOUNT_RATE,
       </if>
       <if test="createdDatetime != null">
         CREATED_DATETIME,
@@ -167,6 +171,9 @@
       </if>
       <if test="itemId != null">
         #{itemId,jdbcType=VARCHAR},
+      </if>
+      <if test="discountRate != null">
+        #{discountRate,jdbcType=DECIMAL},
       </if>
       <if test="createdDatetime != null">
         #{createdDatetime,jdbcType=TIMESTAMP},
@@ -209,6 +216,9 @@
       <if test="record.itemId != null">
         ITEM_ID = #{record.itemId,jdbcType=VARCHAR},
       </if>
+      <if test="record.discountRate != null">
+        DISCOUNT_RATE = #{record.discountRate,jdbcType=DECIMAL},
+      </if>
       <if test="record.createdDatetime != null">
         CREATED_DATETIME = #{record.createdDatetime,jdbcType=TIMESTAMP},
       </if>
@@ -234,6 +244,7 @@
       MSG_CONTENT = #{record.msgContent,jdbcType=VARCHAR},
       RET_MSG = #{record.retMsg,jdbcType=VARCHAR},
       ITEM_ID = #{record.itemId,jdbcType=VARCHAR},
+      DISCOUNT_RATE = #{record.discountRate,jdbcType=DECIMAL},
       CREATED_DATETIME = #{record.createdDatetime,jdbcType=TIMESTAMP},
       CREATED_ID = #{record.createdId,jdbcType=VARCHAR},
       MODIFIED_DATETIME = #{record.modifiedDatetime,jdbcType=TIMESTAMP},
@@ -260,6 +271,9 @@
       <if test="itemId != null">
         ITEM_ID = #{itemId,jdbcType=VARCHAR},
       </if>
+      <if test="discountRate != null">
+        DISCOUNT_RATE = #{discountRate,jdbcType=DECIMAL},
+      </if>
       <if test="createdDatetime != null">
         CREATED_DATETIME = #{createdDatetime,jdbcType=TIMESTAMP},
       </if>
@@ -282,6 +296,7 @@
       MSG_CONTENT = #{msgContent,jdbcType=VARCHAR},
       RET_MSG = #{retMsg,jdbcType=VARCHAR},
       ITEM_ID = #{itemId,jdbcType=VARCHAR},
+      DISCOUNT_RATE = #{discountRate,jdbcType=DECIMAL},
       CREATED_DATETIME = #{createdDatetime,jdbcType=TIMESTAMP},
       CREATED_ID = #{createdId,jdbcType=VARCHAR},
       MODIFIED_DATETIME = #{modifiedDatetime,jdbcType=TIMESTAMP},
@@ -290,8 +305,8 @@
   </update>
   <sql id="Batch_Insert_Column_List">
     #{item.id}, #{item.senderId}, #{item.senderName}, #{item.msgContent}, #{item.retMsg}, 
-    #{item.itemId}, #{item.createdDatetime}, #{item.createdId}, #{item.modifiedDatetime}, 
-    #{item.modifiedId}
+    #{item.itemId}, #{item.discountRate}, #{item.createdDatetime}, #{item.createdId}, 
+    #{item.modifiedDatetime}, #{item.modifiedId}
   </sql>
   <insert id="insertBatch" parameterType="java.util.List">
     insert into ALIT_MESSAGE_LOG(

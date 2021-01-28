@@ -13,14 +13,15 @@
     <result column="MSG_CONTENT" jdbcType="VARCHAR" property="msgContent" />
     <result column="RET_MSG" jdbcType="VARCHAR" property="retMsg" />
     <result column="ITEM_ID" jdbcType="VARCHAR" property="itemId" />
+    <result column="DISCOUNT_RATE" jdbcType="DECIMAL" property="discountRate" />
     <result column="CREATED_DATETIME" jdbcType="TIMESTAMP" property="createdDatetime" />
     <result column="CREATED_ID" jdbcType="VARCHAR" property="createdId" />
     <result column="MODIFIED_DATETIME" jdbcType="TIMESTAMP" property="modifiedDatetime" />
     <result column="MODIFIED_ID" jdbcType="VARCHAR" property="modifiedId" />
   </resultMap>
   <sql id="Base_Column_List">
-    ID, SENDER_ID, SENDER_NAME, MSG_CONTENT, RET_MSG, ITEM_ID, CREATED_DATETIME, CREATED_ID, 
-    MODIFIED_DATETIME, MODIFIED_ID
+    ID, SENDER_ID, SENDER_NAME, MSG_CONTENT, RET_MSG, ITEM_ID, DISCOUNT_RATE, CREATED_DATETIME, 
+    CREATED_ID, MODIFIED_DATETIME, MODIFIED_ID
   </sql>
   <!-- 该注释以下的内容不会被覆盖，请不要删除或修改此条注释内容-->
 </mapper>

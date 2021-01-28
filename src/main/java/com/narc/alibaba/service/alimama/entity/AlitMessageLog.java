@@ -1,5 +1,6 @@
 package com.narc.alibaba.service.alimama.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import javax.validation.constraints.*;
 import lombok.Data;
@@ -9,7 +10,7 @@ import lombok.Data;
  * 消息表
  * 
  * @author Narc
- * @date 2021-01-25
+ * @date 2021-01-27
  */
 @Data
 public class AlitMessageLog {
@@ -54,6 +55,12 @@ public class AlitMessageLog {
      */
     @Size(max=64)
     private String itemId;
+
+    /**
+     * DISCOUNT_RATE
+     * 返现比例
+     */
+    private BigDecimal discountRate;
 
     /**
      * CREATED_DATETIME

@@ -280,10 +280,11 @@ public class AlimamaServiceImpl implements AlimamaService {
                     rate = rate.multiply(new BigDecimal(0.9));
                     rate = rate.divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN);
                     BigDecimal price = new BigDecimal(mapData.getReservePrice());
-                    if (mapData.getSalePrice() != null) {
-                        price = new BigDecimal(mapData.getSalePrice());
+                    if (mapData.getZkFinalPrice() != null) {
+                        price = new BigDecimal(mapData.getZkFinalPrice());
                     }
                     rate = doDiscountStrategy(rate, price, type);
+                    alitMessageLog.setDiscountRate(rate);
                     BigDecimal discount = price.multiply(rate)
                             .divide(new BigDecimal(100), 2, BigDecimal.ROUND_HALF_DOWN);
                     sb.append("==================").append("\r\n");
@@ -312,28 +313,29 @@ public class AlimamaServiceImpl implements AlimamaService {
             return rate;
         }
         //执行策略
+        BigDecimal earn = rate.multiply(price).divide(new BigDecimal(100));
         //返现小于1元，不赚钱
-        if (rate.multiply(price).compareTo(new BigDecimal(1)) <= 0) {
+        if (earn.compareTo(new BigDecimal(1)) <= 0) {
             return rate;
         }
         //返现1-5元，赚10%
-        if (rate.multiply(price).compareTo(new BigDecimal(5)) <= 0) {
+        if (earn.compareTo(new BigDecimal(5)) <= 0) {
             return rate.multiply(new BigDecimal(1 - 0.1));
         }
         //返现5-10元，赚15%
-        if (rate.multiply(price).compareTo(new BigDecimal(10)) <= 0) {
+        if (earn.compareTo(new BigDecimal(10)) <= 0) {
             return rate.multiply(new BigDecimal(1 - 0.15));
         }
         //返现10-25元，赚25%
-        if (rate.multiply(price).compareTo(new BigDecimal(25)) <= 0) {
+        if (earn.compareTo(new BigDecimal(25)) <= 0) {
             return rate.multiply(new BigDecimal(1 - 0.25));
         }
         //返现25-50元，赚40%
-        if (rate.multiply(price).compareTo(new BigDecimal(50)) <= 0) {
+        if (earn.compareTo(new BigDecimal(50)) <= 0) {
             return rate.multiply(new BigDecimal(1 - 0.4));
         }
         //返现50-100元，赚50%
-        if (rate.multiply(price).compareTo(new BigDecimal(100)) <= 0) {
+        if (earn.compareTo(new BigDecimal(100)) <= 0) {
             return rate.multiply(new BigDecimal(1 - 0.5));
         }
         //返现100元以上，赚60%
@@ -391,7 +393,8 @@ public class AlimamaServiceImpl implements AlimamaService {
                     res.addAll(response.getResultList());
                 }
                 pageNo++;
-            } while (response != null && response.getTotalResults() > pageNo * 100L);
+            } while (response != null && response.getTotalResults() != null &&
+                    response.getTotalResults() > pageNo * 100L);
             for (TbkDgMaterialOptionalResponse.MapData mapData : res) {
                 if (itemId.equals("" + mapData.getItemId())) {
                     return mapData;
