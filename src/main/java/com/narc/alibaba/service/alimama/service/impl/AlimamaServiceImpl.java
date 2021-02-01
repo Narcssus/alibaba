@@ -144,7 +144,7 @@ public class AlimamaServiceImpl implements AlimamaService {
             update.setSenderId(alitMessageLog.getSenderId());
             update.setSenderName(alitMessageLog.getSenderName());
             update.setDiscountRate(discountRate);
-            update.setDiscountRate(discount);
+            update.setDiscountFee(discount);
             alitPublisherOrderDaoService.updateByPrimaryKeySelective(update);
         }
 
