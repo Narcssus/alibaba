@@ -29,9 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -81,6 +79,63 @@ public class AlimamaServiceImpl implements AlimamaService {
         jsonObject.put("tranShareWord", res);
         return jsonObject;
     }
+
+    @Override
+    public JSONObject dealTklAdmin(JSONObject paramObject) {
+        String originalWord = paramObject.getString("originalWord");
+        AlitMessageLog alitMessageLog = new AlitMessageLog();
+        alitMessageLog.setSenderId(paramObject.getString("senderId"));
+        alitMessageLog.setSenderName(paramObject.getString("senderName"));
+        alitMessageLog.setMsgContent(originalWord);
+        String res = "无效口令";
+        switch (originalWord) {
+            case "查看未结算用户":
+                res = dealAllUndoOrders();
+                break;
+            case "结算未结算用户":
+                res = endAllDoingOrders();
+                break;
+            default:
+                break;
+        }
+        alitMessageLog.setRetMsg(res);
+        alitMessageLogDaoService.insertSelective(alitMessageLog);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("res", res);
+        return jsonObject;
+    }
+
+    private String endAllDoingOrders(){
+        alitPublisherOrderDaoService.endAllDoingOrders();
+        return "结算成功";
+    }
+
+    private String dealAllUndoOrders() {
+        List<AlitPublisherOrder> list = alitPublisherOrderDaoService.getAllUndoOrders();
+        if (CollectionUtils.isEmpty(list)) {
+            return "无未结算订单";
+        }
+        Map<String, BigDecimal> map = new HashMap<>();
+        for (AlitPublisherOrder order : list) {
+            String key = order.getSenderName() + "[" + order.getSenderId() + "]";
+            if (!map.containsKey(key)) {
+                map.put(key, new BigDecimal(0));
+            }
+            map.put(key, map.get(key).add(order.getDiscountFee()));
+        }
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, BigDecimal> entry : map.entrySet()) {
+            String mapKey = entry.getKey();
+            BigDecimal mapValue = entry.getValue();
+            sb.append(mapKey).append("===").append(mapValue.toPlainString())
+                    .append("\r\n");
+        }
+        //更新状态为处理中
+        List<String> ids = list.stream().map(AlitPublisherOrder::getTradeId).collect(Collectors.toList());
+        alitPublisherOrderDaoService.updateUndoOrders(ids);
+        return sb.toString();
+    }
+
 
     @Override
     public void getOrders(Date startTime, Date endTime) {
@@ -145,6 +200,7 @@ public class AlimamaServiceImpl implements AlimamaService {
             update.setSenderName(alitMessageLog.getSenderName());
             update.setDiscountRate(discountRate);
             update.setDiscountFee(discount);
+            update.setIsDone("0");
             alitPublisherOrderDaoService.updateByPrimaryKeySelective(update);
         }
 

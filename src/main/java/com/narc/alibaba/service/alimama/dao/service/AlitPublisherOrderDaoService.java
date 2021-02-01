@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import com.narc.alibaba.service.alimama.entity.AlitPublisherOrderExample;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -47,6 +48,33 @@ public class AlitPublisherOrderDaoService {
         AlitPublisherOrderExample example = new AlitPublisherOrderExample();
         example.createCriteria().andTkStatusEqualTo("12");
         return alitPublisherOrderMapper.selectByExample(example);
+    }
+
+    /**
+     * 查询所有未返现订单
+     *
+     * @return
+     */
+    public List<AlitPublisherOrder> getAllUndoOrders() {
+        AlitPublisherOrderExample example = new AlitPublisherOrderExample();
+        example.createCriteria().andIsDoneIn(Arrays.asList("0", "1"));
+        return alitPublisherOrderMapper.selectByExample(example);
+    }
+
+    public void updateUndoOrders(List<String> ids) {
+        AlitPublisherOrderExample example = new AlitPublisherOrderExample();
+        example.createCriteria().andTradeIdIn(ids);
+        AlitPublisherOrder update = new AlitPublisherOrder();
+        update.setIsDone("1");
+        alitPublisherOrderMapper.updateByExampleSelective(update, example);
+    }
+
+    public void endAllDoingOrders(){
+        AlitPublisherOrderExample example = new AlitPublisherOrderExample();
+        example.createCriteria().andIsDoneEqualTo("1");
+        AlitPublisherOrder update = new AlitPublisherOrder();
+        update.setIsDone("2");
+        alitPublisherOrderMapper.updateByExampleSelective(update, example);
     }
 
 

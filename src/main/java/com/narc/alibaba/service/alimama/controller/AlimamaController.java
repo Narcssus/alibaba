@@ -40,6 +40,14 @@ public class AlimamaController {
         return alimamaService.tranShareWord(paramObject);
     }
 
+    @ApiOperation(value = "淘口令管理接口", notes = "淘口令管理接口")
+    @GetMapping(value = "/dealTklAdmin")
+    public JSONObject dealTklAdmin(String param) {
+        log.info("淘口令转链收到请求：{}", param);
+        JSONObject paramObject = JSON.parseObject(param);
+        return alimamaService.dealTklAdmin(paramObject);
+    }
+
     @ApiOperation(value = "test", notes = "test")
     @GetMapping(value = "/test")
     public String test(String startTime,String endTime) {
