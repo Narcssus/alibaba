@@ -36,4 +36,14 @@ public class AlitConfigDaoService {
         return list.get(0).getConfigValue();
     }
 
+    public AlitConfig getByKey(String key){
+        AlitConfigExample example = new AlitConfigExample();
+        example.createCriteria().andConfigKeyEqualTo(key);
+        List<AlitConfig> list = alitConfigMapper.selectByExample(example);
+        if (CollectionUtils.isEmpty(list) || list.get(0) == null) {
+            return null;
+        }
+        return list.get(0);
+    }
+
 }

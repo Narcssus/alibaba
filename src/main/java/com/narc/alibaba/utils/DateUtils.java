@@ -9,31 +9,35 @@ import java.util.Date;
  */
 public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 
-    public static final String FORMAT_19 ="yyyy-MM-dd HH:mm:ss";
+    public static final String FORMAT_19 = "yyyy-MM-dd HH:mm:ss";
 
 
-    public static Date convertStrToDate(String str,String format){
+    public static Date convertStrToDate(String str, String format) {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
-        try{
+        try {
             return sdf.parse(str);
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
 
 
-    public static String convertDateToStr(Date date,String format){
+    public static String convertDateToStr(Date date, String format) {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
-        try{
+        try {
             return sdf.format(date);
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
 
-
-
-
+    /**
+     * 计算两个日期相差天数(绝对值)
+     */
+    public static long getDateDiffDay(Date a, Date b) {
+        long diff = Math.abs(a.getTime() - b.getTime());
+        return diff / (1000 * 24 * 60 * 60);
+    }
 
 
 }
