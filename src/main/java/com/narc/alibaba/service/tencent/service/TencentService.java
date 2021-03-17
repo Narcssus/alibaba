@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * 阿里妈妈接口服务类
+ * 腾讯接口服务类
  *
  * @author : Narcssus
  * @date : 2020/11/25 21:46
