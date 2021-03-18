@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @date : 2020/11/25 21:46
  */
 @Primary
-@FeignClient(name = "tencent", fallback = DefaultFallbackImpl.class)
+@FeignClient(name = "sms", fallback = DefaultFallbackImpl.class)
 public interface TencentService {
 
     /**
