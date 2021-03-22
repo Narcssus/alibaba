@@ -25,7 +25,7 @@ public class DealUnfinshOrderThread extends CommonTask {
     private AlimamaService alimamaService;
 
     private static final int THREAD_ID = 3;
-    //26销售
+    //26小时
     private static final int INTERVAL_TIME = 60 * 26;
 
     /**

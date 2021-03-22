@@ -1,7 +1,7 @@
 package com.narc.alibaba.service.tencent.service.defaultImpl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.narc.alibaba.service.tencent.service.TencentService;
+import com.narc.alibaba.service.tencent.service.SmsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -11,11 +11,17 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-public class DefaultFallbackImpl implements TencentService {
+public class DefaultFallbackImpl implements SmsService {
 
     @Override
-    public JSONObject sendSms(String param) {
-        log.info("请求sendSms，降级处理");
+    public JSONObject sendAlimamaAuthCodeNotice(String param) {
+        log.info("请求sendAlimamaAuthCodeNotice，降级处理");
+        return new JSONObject();
+    }
+
+    @Override
+    public JSONObject sendAlimamaUndoOrderNotice(String param) {
+        log.info("请求sendAlimamaUndoOrderNotice，降级处理");
         return new JSONObject();
     }
 }

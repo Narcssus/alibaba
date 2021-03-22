@@ -16,15 +16,20 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Primary
 @FeignClient(name = "sms", fallback = DefaultFallbackImpl.class)
-public interface TencentService {
+public interface SmsService {
 
     /**
      * 发送管理员通知短信
      *
      */
     @RequestMapping(value = "/sms/sendAlimamaAuthCodeNotice", method = RequestMethod.POST)
-    JSONObject sendSms(@RequestParam("param") String param);
+    JSONObject sendAlimamaAuthCodeNotice(@RequestParam("param") String param);
 
+    /**
+     * 发送管理员通知短信
+     */
+    @RequestMapping(value = "/sms/sendAlimamaUndoOrderNotice", method = RequestMethod.POST)
+    JSONObject sendAlimamaUndoOrderNotice(@RequestParam("param") String param);
 
 
 

@@ -2,8 +2,7 @@ package com.narc.alibaba.thread;
 
 import com.narc.alibaba.service.alimama.dao.service.AlitConfigDaoService;
 import com.narc.alibaba.service.alimama.entity.AlitConfig;
-import com.narc.alibaba.service.alimama.service.AlimamaService;
-import com.narc.alibaba.service.tencent.service.TencentService;
+import com.narc.alibaba.service.tencent.service.SmsService;
 import com.narc.alibaba.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ import java.util.Date;
 public class AuthCodeThread extends CommonTask {
 
     @Autowired
-    private TencentService tencentService;
+    private SmsService smsService;
     @Autowired
     private AlitConfigDaoService alitConfigDaoService;
 
@@ -44,8 +43,8 @@ public class AuthCodeThread extends CommonTask {
         Date now = new Date();
         log.debug("执行管理员配置检查定时任务，{}", DateUtils.convertDateToStr(now, DateUtils.FORMAT_19));
         AlitConfig config = alitConfigDaoService.getByKey("taobao_user_id");
-        if (config == null || DateUtils.getDateDiffDay(now, config.getModifiedDatetime()) >= 3) {
-            tencentService.sendSms("");
+        if (config == null || DateUtils.getDateDiffDay(now, config.getModifiedDatetime()) <= 3) {
+            smsService.sendAlimamaAuthCodeNotice("");
         }
 
     }
