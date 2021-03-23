@@ -105,7 +105,7 @@ public class AlimamaServiceImpl implements AlimamaService {
         return jsonObject;
     }
 
-    private String endAllDoingOrders(){
+    private String endAllDoingOrders() {
         alitPublisherOrderDaoService.endAllDoingOrders();
         return "结算成功";
     }
@@ -510,7 +510,9 @@ public class AlimamaServiceImpl implements AlimamaService {
     }
 
     private TbkDgMaterialOptionalResponse.MapData getItemByTitleAndId(String itemName, String itemId) {
-        TaobaoClient client = new DefaultTaobaoClient(apiUrl, appKey, appSecret);
+        TaobaoClient client = new DefaultTaobaoClient(apiUrl, appKey, appSecret,
+                "json",1000,3000);
+
         if (itemName.contains("】")) {
             itemName = itemName.substring(itemName.lastIndexOf("【") + 1, itemName.lastIndexOf("】"));
         }
@@ -554,6 +556,9 @@ public class AlimamaServiceImpl implements AlimamaService {
             req.setNumIids(id);
             TbkItemInfoGetResponse rsp = client.execute(req);
             List<TbkItemInfoGetResponse.NTbkItem> items = rsp.getResults();
+            if (CollectionUtils.isEmpty(items)) {
+                return null;
+            }
             TbkItemInfoGetResponse.NTbkItem item = items.get(0);
             return item.getTitle();
         } catch (Exception e) {
