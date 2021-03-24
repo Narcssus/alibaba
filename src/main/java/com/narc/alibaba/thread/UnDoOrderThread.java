@@ -37,10 +37,10 @@ public class UnDoOrderThread extends CommonTask {
     private static final int INTERVAL_TIME = 60 * 47;
 
     /**
-     * 每天16点执行一次
+     * 每天10点执行一次
      */
 
-    @Scheduled(cron = "0 0 16 * * ?")
+    @Scheduled(cron = "0 0 10 * * ?")
     public void doFetchOrders() {
         runTask(THREAD_ID, INTERVAL_TIME);
     }
@@ -52,6 +52,7 @@ public class UnDoOrderThread extends CommonTask {
         List<AlitPublisherOrder> list = alitPublisherOrderDaoService.getAllUndoOrders();
         if (CollectionUtils.isEmpty(list)) {
             log.debug("执行未结算订单通知任务，无未结算订单");
+            return;
         }
         JSONObject paramObj = new JSONObject();
         paramObj.put("num", list.size());
