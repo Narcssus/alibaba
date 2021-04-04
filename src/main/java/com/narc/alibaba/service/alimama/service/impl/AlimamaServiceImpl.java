@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -494,24 +495,35 @@ public class AlimamaServiceImpl implements AlimamaService {
             }
         }
         //用第三方工具找
-        String word = getWordByContent(originalWord);
-        String url = "https://api.taokouling.com/tkl/tkljm?apikey=bwZnYFuzyD&tkl=" + word;
-        String httpContent = HttpUtils.sendGet(url);
-        JSONObject jsonObject = JSON.parseObject(httpContent);
-        String itemId = getItemId(jsonObject.getString("url"));
-        String itemName = getNameById(itemId);
-        if (itemName == null) {
-            itemName = jsonObject.getString("content");
+//        String word = getWordByContent(originalWord);
+        try {
+            String url = "http://api.web.ecapi.cn/taoke/doTpwdCovert?apkey=9b80d4b5-a84c-4aee-5e79-a3487f0f67e6&%20pid=mm_1405930176_2026750024_110924600173&" +
+                    "%20content=" + URLEncoder.encode(originalWord, "utf-8") + "&tbname=narcssusinnook";
+            log.debug("第三方工具接口：{}", url);
+            String httpContent = HttpUtils.sendGet(url);
+            log.debug("第三方工具接口返回：{}", httpContent);
+            JSONObject jsonObject = JSON.parseObject(httpContent);
+            if (!jsonObject.containsKey("data")) {
+                return null;
+            }
+            String itemId = jsonObject.getJSONObject("data").getString("item_id");
+            if (itemId == null) {
+                return null;
+            }
+            String itemName = getNameById(itemId);
+            if (itemName == null) {
+                return null;
+            }
+            return getItemByTitleAndId(itemName, itemId);
+        } catch (Exception e) {
+            log.error("", e);
         }
-        if (itemId == null) {
-            return null;
-        }
-        return getItemByTitleAndId(itemName, itemId);
+        return null;
     }
 
     private TbkDgMaterialOptionalResponse.MapData getItemByTitleAndId(String itemName, String itemId) {
         TaobaoClient client = new DefaultTaobaoClient(apiUrl, appKey, appSecret,
-                "json",1000,3000);
+                "json", 1000, 3000);
 
         if (itemName.contains("】")) {
             itemName = itemName.substring(itemName.lastIndexOf("【") + 1, itemName.lastIndexOf("】"));
@@ -534,6 +546,7 @@ public class AlimamaServiceImpl implements AlimamaService {
                 pageNo++;
             } while (response != null && response.getTotalResults() != null &&
                     response.getTotalResults() > pageNo * 100L);
+            log.debug("==============="+JSON.toJSONString(res));
             for (TbkDgMaterialOptionalResponse.MapData mapData : res) {
                 if (itemId.equals("" + mapData.getItemId())) {
                     return mapData;
